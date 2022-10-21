@@ -16,6 +16,14 @@ class MeetingModule {
     private let logger = FlutterLogger(name: "MeetingModule")
     
     var onEndMeeting: (() -> Void)?
+    var onMeetingBeignRecorded: (() -> Void)?
+    var onMeetingStopRecording: (() -> Void)?
+    
+    func clear() {
+        self.onEndMeeting = nil
+        self.onMeetingBeignRecorded = nil
+        self.onMeetingStopRecording = nil
+    }
     
     func prepareMeeting(sessionEntity: MeetingSessionEntity,
                         completion: ((Bool) -> Void)? = nil) {
@@ -33,20 +41,24 @@ class MeetingModule {
         
         queueQroup.notify(queue: .main) { [weak self] in
             if isMicEnabled, isCameraEnabled {
-                guard let meeting = sessionEntity.getMeeting(),
-                      let attendee = sessionEntity.getAttendee()
+                guard let meetingUUID = sessionEntity.uuid,
+                      let attendee = sessionEntity.attendee,
+                      let meetingResponse = sessionEntity.getMeetingResponse(),
+                      let attendeeResponse = sessionEntity.getAttendeeResponse()
                 else {
                     self?.logger.fault(msg: "SessionEntity not valid ")
                     completion?(false)
                     return
                 }
-
-                let meetingSessionConfig = MeetingSessionConfiguration(
-                    createMeetingResponse: meeting,
-                    createAttendeeResponse: attendee
-                )
                 
-                let vm = VideoConferenceVM(configuration: meetingSessionConfig)
+                let asAgent = sessionEntity.asAgent ?? false
+                let vm = VideoConferenceVM(
+                    uuid: meetingUUID,
+                    attendee: attendee,
+                    createMeetingResponse: meetingResponse,
+                    createAttendeeResponse: attendeeResponse,
+                    isAsAgent: asAgent
+                )
                 let vc = VideoConferenceViewController()
                 vc.viewModel = vm
                 vc.modalPresentationStyle = .fullScreen
@@ -58,9 +70,17 @@ class MeetingModule {
                 self?.onEndMeeting = {[weak self] in
                     vm.stopMeeting {[weak self] in
                         vc.dismiss(animated: true) {[weak self] in
-                            self?.onEndMeeting = nil
+                            self?.clear()
                         }
                     }
+                }
+                
+                self?.onMeetingBeignRecorded = {
+                    vm.meetingBeingRecorded()
+                }
+                
+                self?.onMeetingStopRecording = {
+                    vm.meetingStopRecording()
                 }
             }
         }

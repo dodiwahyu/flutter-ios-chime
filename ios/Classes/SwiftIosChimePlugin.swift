@@ -6,8 +6,11 @@ import SVProgressHUD
 enum FLUTTER_METHOD: String {
     case getPlatformVersion
     case hideLoading
+    case showToast
     case joinMeeting
     case endMeeting
+    case meetingBeingRecorded
+    case meetingStopRecording
 }
 
 public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
@@ -34,13 +37,18 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             result("iOS " + UIDevice.current.systemVersion)
         case .hideLoading:
             SVProgressHUD.dismiss()
+        case .showToast:
+            SVProgressHUD.showError(withStatus: call.arguments as? String)
         case .joinMeeting:
             handleJoinMeeting(args: call.arguments, result: result)
         case .endMeeting:
             handleEndMeeting(result: result)
+        case .meetingBeingRecorded:
+            handleMeetingBeingRecorded(args: call.arguments, result: result)
+        case .meetingStopRecording:
+            handleMeetingStopRecording(args: call.arguments, result: result)
         }
     }
-    
     
     private func handleJoinMeeting(args: Any?, result: @escaping FlutterResult) {
         guard let json: String = args as? String else
@@ -59,6 +67,14 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
     
     private func handleEndMeeting(result: @escaping FlutterResult) {
         MeetingModule.shared.onEndMeeting?()
+    }
+    
+    private func handleMeetingBeingRecorded(args: Any?, result: @escaping FlutterResult) {
+        MeetingModule.shared.onMeetingBeignRecorded?()
+    }
+    
+    private func handleMeetingStopRecording(args: Any?, result: @escaping FlutterResult) {
+        MeetingModule.shared.onMeetingStopRecording?()
     }
 }
 

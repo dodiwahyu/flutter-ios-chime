@@ -22,7 +22,10 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var endButton: UIButton!
     @IBOutlet weak var micButton: UIButton!
     @IBOutlet weak var optionButton: UIButton!
-
+    @IBOutlet weak var textView: UITextView!
+    
+    @IBOutlet weak var bottomConstraintMenu: NSLayoutConstraint!
+    
     init() {
         let bundle = Bundle.getBundle(for: VideoConferenceViewController.self)
         super.init(nibName: "VideoConferenceViewController", bundle: bundle)
@@ -77,7 +80,26 @@ class VideoConferenceViewController: UIViewController {
     }
     
     @IBAction func didTapOptionButton(_ sender: UIButton) {
+        let alert = UIAlertController(title: "Option", message: nil, preferredStyle: .actionSheet)
+        let toggleScript = UIAlertAction(title: "Toggle script", style: .default) { (_) in
+            self.toggleScript()
+        }
+        alert.addAction(toggleScript)
         
+        let buttonRecord = UIAlertAction(title: viewModel.isRecording ? "Stop record" : "Start record", style: .destructive) { (_) in
+            
+            if self.viewModel.isRecording {
+                self.viewModel.requestStopRecording()
+            } else {
+                self.viewModel.requestRecordAll()
+            }
+        }
+        alert.addAction(buttonRecord)
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true)
     }
     
     // MARK: Private
@@ -91,12 +113,20 @@ class VideoConferenceViewController: UIViewController {
         optionButton.setTitle("", for: .normal)
     }
     
+    private func toggleScript() {
+        UIView.animate(withDuration: 0.3, delay: 0, options: .beginFromCurrentState) {
+            self.textView.isHidden = !self.textView.isHidden
+            let bottomMargin: CGFloat = 16.0
+            self.bottomConstraintMenu.constant = self.textView.isHidden ? self.view.safeAreaInsets.bottom + bottomMargin : bottomMargin
+            self.view.layoutIfNeeded()
+        }
+    }
+    
     private func updateLayoutTabBar() {
         viewTapBar.layer.cornerRadius = viewTapBar.frame.height / 2
         viewTapBar.backgroundColor = Colors.primary
     }
-    
-    
+
     private func bindLocalScreen(_ args: (DefaultMeetingSession, Int)) {
         args.0.audioVideo.bindVideoView(videoView: prymaryScreenView, tileId: args.1)
     }

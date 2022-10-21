@@ -30,4 +30,19 @@ class MethodChannelIosChime extends IosChimePlatform {
   Future<void> endMeeting() {
     return methodChannel.invokeMethod('endMeeting');
   }
+
+  @override
+  Future<void> meetingBeingRecorded() {
+    return methodChannel.invokeMethod('meetingBeingRecorded');
+  }
+
+  @override
+  Future<void> meetingStopRecording() {
+    return methodChannel.invokeMethod('meetingStopRecording');
+  }
+
+  @override
+  Future<void> showToast(String message) {
+    return methodChannel.invokeMethod('showToast', message);
+  }
 }

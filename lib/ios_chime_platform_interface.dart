@@ -38,4 +38,17 @@ abstract class IosChimePlatform extends PlatformInterface {
   Future<void> endMeeting() {
     throw UnimplementedError('endMeeting() has not been implemented.');
   }
+
+  Future<void> meetingBeingRecorded() {
+    throw UnimplementedError(
+        'meetingBeingRecorded() has not been implemented.');
+  }
+
+  Future<void> meetingStopRecording() {
+    throw UnimplementedError('meetingStopRecording() has not been implemented');
+  }
+
+  Future<void> showToast(String message) {
+    throw UnimplementedError('showToast() has not been implemented');
+  }
 }

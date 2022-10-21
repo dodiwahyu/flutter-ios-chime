@@ -20,7 +20,7 @@ struct VideoConferenceJSON: Codable {
         case attendee1, attendee2
     }
     
-    func convert(isAgent: Bool = true) -> MeetingSessionEntity {
+    func convert(isAgent: Bool = false) -> MeetingSessionEntity {
         let meetingEntity = MeetingEntity(
             meetingId: meetingJSON.meetingID,
             externalMeetingId: meetingJSON.externalMeetingID,
@@ -31,7 +31,7 @@ struct VideoConferenceJSON: Codable {
         let attendee = isAgent ? attendee1 : attendee2
         let attendeEntity = AttendeeEntity(externalUserId: attendee.externalUserID, attendeeId: attendee.attendeeID, joinToken: attendee.joinToken)
         
-        return MeetingSessionEntity(meeting: meetingEntity, attendee: attendeEntity)
+        return MeetingSessionEntity(uuid: uuid, meeting: meetingEntity, attendee: attendeEntity, asAgent: isAgent)
     }
 }
 

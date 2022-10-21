@@ -9,10 +9,12 @@ import Foundation
 import AmazonChimeSDK
 
 struct MeetingSessionEntity: Codable {
+    let uuid: String?
     let meeting: MeetingEntity?
     let attendee: AttendeeEntity?
+    let asAgent: Bool?
     
-    func getMeeting() -> CreateMeetingResponse? {
+    func getMeetingResponse() -> CreateMeetingResponse? {
         guard let mediaPlacement = meeting?.mediaPlacement?.mediaPlacement,
               let mediaRegion = meeting?.mediaRegion,
               let meetingId = meeting?.meetingId
@@ -26,7 +28,7 @@ struct MeetingSessionEntity: Codable {
         return CreateMeetingResponse(meeting: meeting)
     }
     
-    func getAttendee() -> CreateAttendeeResponse? {
+    func getAttendeeResponse() -> CreateAttendeeResponse? {
         guard let id = attendee?.attendeeId,
               let userId = attendee?.externalUserId,
               let token = attendee?.joinToken

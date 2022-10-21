@@ -9,6 +9,9 @@ import Foundation
 
 enum AppEventType: String {
     case MettingSessionRequestEnd
+    case ReqRecordMeetingAttendee
+    case ReqRecordMeetingAll
+    case StopRecordMeeting
     
     func payload<T: Encodable>(args: T?) throws -> String {
         let req = AppEventReq(name: self.rawValue, args: args)

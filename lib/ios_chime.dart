@@ -25,4 +25,16 @@ class IosChime {
   static Future<void> endMetting() {
     return IosChimePlatform.instance.endMeeting();
   }
+
+  static Future<void> meetingBeingRecorded() {
+    return IosChimePlatform.instance.meetingBeingRecorded();
+  }
+
+  static Future<void> meetingStopRecording() {
+    return IosChimePlatform.instance.meetingStopRecording();
+  }
+
+  static Future<void> showToast(String message) {
+    return IosChimePlatform.instance.showToast(message);
+  }
 }

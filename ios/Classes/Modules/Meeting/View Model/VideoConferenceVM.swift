@@ -16,16 +16,22 @@ protocol VideoConferenceVMOutput: AnyObject {
 }
 
 class VideoConferenceVM {
+    let logger = FlutterLogger(name: "VideoConferenceVM")
     weak var output: VideoConferenceVMOutput?
-    var eventSink: FlutterEventSink? {
-        return APPStreamHandler.shared.getEventSink()
-    }
     
+    var meetingUUID: String!
+    var currentAttendee: AttendeeEntity!
+    var isAsAgent: Bool = false
     
     var audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K)
     var meetingSessionConfig: MeetingSessionConfiguration!
     var meetingSession: DefaultMeetingSession!
-    let logger = FlutterLogger(name: "VideoConferenceVM")
+    var listAttendeeJoinded: [AttendeeInfo] = []
+    var isRecording: Bool = false
+    
+    var eventSink: FlutterEventSink? {
+        return APPStreamHandler.shared.getEventSink()
+    }
     
     var audioDevices: [MediaDevice] {
         return meetingSession.audioVideo.listAudioDevices()
@@ -75,8 +81,19 @@ class VideoConferenceVM {
         }
     }
     
-    init(configuration: MeetingSessionConfiguration) {
-        self.meetingSessionConfig = configuration
+    init(uuid: String,
+         attendee: AttendeeEntity,
+         createMeetingResponse: AmazonChimeSDK.CreateMeetingResponse,
+         createAttendeeResponse: AmazonChimeSDK.CreateAttendeeResponse,
+         isAsAgent: Bool
+    ) {
+        self.meetingUUID = uuid
+        self.currentAttendee = attendee
+        self.isAsAgent = isAsAgent
+        self.meetingSessionConfig = MeetingSessionConfiguration(
+            createMeetingResponse: createMeetingResponse,
+            createAttendeeResponse: createAttendeeResponse
+        )
         self.meetingSession = DefaultMeetingSession(
             configuration: self.meetingSessionConfig,
             logger: self.logger.chimeLogger
@@ -113,12 +130,7 @@ class VideoConferenceVM {
         }
     }
     
-    func stopMeeting(_ completion: (() -> Void)? = nil) {
-        meetingSession.audioVideo.stop()
-        completion?()
-    }
-    
-    func startLocalVideo(completion: ((Bool) -> Void)? = nil) {
+    func startLocalVideo(completion: BoolCompletion? = nil) {
         do {
             try meetingSession.audioVideo.startLocalVideo()
             completion?(true)
@@ -145,7 +157,10 @@ class VideoConferenceVM {
         let status = meetingSession.audioVideo.realtimeLocalUnmute()
         completion?(status)
     }
-    
+}
+
+// Comunting with dart
+extension VideoConferenceVM {
     func requestEndMeeting() {
         SVProgressHUD.show()
         let meetingId = meetingSessionConfig.meetingId
@@ -155,6 +170,62 @@ class VideoConferenceVM {
         } catch {
             logger.fault(msg: error.localizedDescription)
         }
+    }
+    
+    func requestRecordAll() {
+        do {
+            let payload = try AppEventType.ReqRecordMeetingAll
+                .payload(args: ["uuid": meetingUUID])
+            SVProgressHUD.show()
+            eventSink?(payload)
+        } catch {
+            logger.fault(msg: error.localizedDescription)
+        }
+    }
+    
+    func requestRecordAttendee() {
+        do {
+            let payload = try AppEventType.ReqRecordMeetingAttendee
+                .payload(args: [
+                    "uuid": meetingUUID,
+                    "attendeeId": currentAttendee.attendeeId
+                ])
+            
+            SVProgressHUD.show()
+            eventSink?(payload)
+        } catch {
+            logger.fault(msg: error.localizedDescription)
+        }
+    }
+    
+    func requestStopRecording() {
+        do {
+            let payload = try AppEventType.StopRecordMeeting.payload(args: ["uuid": meetingUUID])
+            SVProgressHUD.show()
+            eventSink?(payload)
+        } catch {
+            logger.fault(msg: error.localizedDescription)
+        }
+    }
+}
+
+// Response from dart
+extension VideoConferenceVM {
+    func meetingBeingRecorded(_ completion: DefaultPluginCompletion? = nil) {
+        SVProgressHUD.showSuccess(withStatus: "Start recording")
+        isRecording = true
+        completion?()
+    }
+    
+    func meetingStopRecording(_ completion: DefaultPluginCompletion? = nil) {
+        SVProgressHUD.showSuccess(withStatus: "Recording did stopped")
+        isRecording = false
+        completion?()
+    }
+    
+    func stopMeeting(_ completion: DefaultPluginCompletion? = nil) {
+        meetingSession.audioVideo.stop()
+        completion?()
     }
 }
 
@@ -265,7 +336,22 @@ extension VideoConferenceVM: RealtimeObserver {
     }
     
     func attendeesDidJoin(attendeeInfo: [AmazonChimeSDK.AttendeeInfo]) {
+        print("attendeesDidJoin APP => \(attendeeInfo)")
         
+        for info in attendeeInfo {
+            if !listAttendeeJoinded.contains(where: {$0.attendeeId == info.attendeeId}) {
+                listAttendeeJoinded.append(info)
+            }
+        }
+    
+        // Is there one other attendee?
+        // If yes start record all
+        if !isRecording,
+           listAttendeeJoinded.first(where: {
+               $0.attendeeId != currentAttendee.attendeeId
+           }) != nil {
+            self.requestRecordAll()
+        }
     }
     
     func attendeesDidLeave(attendeeInfo: [AmazonChimeSDK.AttendeeInfo]) {
