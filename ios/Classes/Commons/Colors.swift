@@ -7,6 +7,11 @@
 
 import UIKit
 
+/**
+ Here's a set of color constants that exactly match with ams color theme.
+ So when changing the color in dart code ,
+ please update this constants as much as possible.
+ */
 struct Colors {
     static let primary = UIColor(0xff19b7bc)
     static let primaryTrans = UIColor(0x3019b7bc)

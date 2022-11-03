@@ -4,7 +4,6 @@ import AmazonChimeSDK
 import SVProgressHUD
 
 enum FLUTTER_METHOD: String {
-    case getPlatformVersion
     case hideLoading
     case showToast
     case joinMeeting
@@ -33,8 +32,6 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
         logger.info(msg: "invokking \(method)")
         
         switch method {
-        case .getPlatformVersion:
-            result("iOS " + UIDevice.current.systemVersion)
         case .hideLoading:
             SVProgressHUD.dismiss()
         case .showToast:

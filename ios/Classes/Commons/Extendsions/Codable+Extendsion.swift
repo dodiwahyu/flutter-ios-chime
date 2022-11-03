@@ -8,6 +8,26 @@
 import Foundation
 
 extension KeyedDecodingContainer {
+    /**
+     Simple way to decode container with key.
+     ```
+     struct MeetingEntity: Codable {
+         let meetingId: String?
+         let externalMeetingId: String?
+         
+         enum CodingKeys: String, CodingKey {
+             case meetingId = "MeetingId"
+             case externalMeetingId = "ExternalMeetingId"
+         }
+
+         init(from decoder: Decoder) throws {
+             let values = try decoder.container(keyedBy: CodingKeys.self)
+             meetingId = values[.meetingId]
+             externalMeetingId = values[.externalMeetingId]
+         }
+     }
+     ```
+     */
     subscript<T: Decodable>(key: KeyedDecodingContainer.Key) -> T? {
         return try? decodeIfPresent(T.self, forKey: key)
     }

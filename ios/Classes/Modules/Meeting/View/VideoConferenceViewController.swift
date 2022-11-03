@@ -69,8 +69,6 @@ class VideoConferenceViewController: UIViewController {
     }
     
     @IBAction func didTapEndButton(_ sender: UIButton) {
-//        viewModel.stopMeeting()
-//        self.dismiss(animated: true)
         viewModel.requestEndMeeting()
     }
     

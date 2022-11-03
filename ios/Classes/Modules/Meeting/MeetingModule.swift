@@ -9,7 +9,6 @@ import AmazonChimeSDK
 import AVFoundation
 import UIKit
 
-let incomingCallKitDelayInSeconds = 10.0
 
 class MeetingModule {
     static var shared: MeetingModule = MeetingModule()
@@ -19,12 +18,26 @@ class MeetingModule {
     var onMeetingBeignRecorded: (() -> Void)?
     var onMeetingStopRecording: (() -> Void)?
     
+    /**
+     Method to clear all session in this module.
+     This method called when `VideoConferenceViewController` did disappear
+     */
     func clear() {
         self.onEndMeeting = nil
         self.onMeetingBeignRecorded = nil
         self.onMeetingStopRecording = nil
     }
     
+    /**
+     In this part we need to check microphone access permission and camera access permissin are `Granted` by user.
+     If not do nothing.
+     
+     We use `DispatchGroup` to manage process multiple request permission.
+     When process are completed, do init view controller meeting and present it to most top of controller from stack.
+     
+     - Parameter sessionEntity: `MeetingSessionEntity`
+     - Parameter completion: `Bool` return callBack
+     */
     func prepareMeeting(sessionEntity: MeetingSessionEntity,
                         completion: ((Bool) -> Void)? = nil) {
         
@@ -99,6 +112,10 @@ class MeetingModule {
         }
     }
     
+    /**
+     Request audiosession with completion
+     - Parameter completion: `Bool` return callback
+     */
     func requestRecordPermission(completion: @escaping (Bool) -> Void) {
         let audioSession = AVAudioSession.sharedInstance()
         switch audioSession.recordPermission {
@@ -122,6 +139,10 @@ class MeetingModule {
         }
     }
 
+    /**
+     Request camera video permission with completion
+     - Parameter completion: `Boo` return callBack
+     */
     func requestVideoPermission(completion: @escaping (Bool) -> Void) {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .denied, .restricted:
@@ -144,6 +165,9 @@ class MeetingModule {
         }
     }
 
+    /**
+     Configure audio session before start metting session
+     */
     func configureAudioSession() {
         let audioSession = AVAudioSession.sharedInstance()
         do {

@@ -7,21 +7,43 @@
 
 import Foundation
 
-enum AppEventType: String {
-    case MettingSessionRequestEnd
+
+/**
+ All events should be registered in this enum.
+ If need add some listener from native to dart please update this section
+ */
+enum AppEventType: String, Codable {
+    case MeetingSessionRequestEnd
     case ReqRecordMeetingAttendee
     case ReqRecordMeetingAll
     case StopRecordMeeting
     
+    /**
+     Generate parameter JSON String
+     - Parameter args: Object `Encodable` to be encoded as JSON String
+     - Returns: a `String` as JSON String
+     */
     func payload<T: Encodable>(args: T?) throws -> String {
-        let req = AppEventReq(name: self.rawValue, args: args)
+        let req = AppEventReq(name: self, args: args)
         return try req.toJSON() as String
     }
 }
 
 
+/**
+ `AppEventReq` is a model `Encodable` type .
+ where `T` is parameters  `Encodable` to be encoded as `JSON` string
+ ```
+ // Name: Value from `AppEventType`
+ // Arguments: String JSON to be parsed to dart function
+ {
+    "Name": `String`,
+    "Arguments": `String`
+ }
+ ```
+ */
 fileprivate struct AppEventReq<T: Encodable>: Encodable {
-    var name: String
+    var name: AppEventType
     var arguments: T?
     
     enum CodingKeys: String, CodingKey {
@@ -29,7 +51,7 @@ fileprivate struct AppEventReq<T: Encodable>: Encodable {
         case arguments = "Arguments"
     }
     
-    init(name: String, args: T?) {
+    init(name: AppEventType, args: T?) {
         self.name = name
         self.arguments = args
     }

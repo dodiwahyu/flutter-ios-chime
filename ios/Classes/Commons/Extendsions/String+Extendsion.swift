@@ -9,6 +9,10 @@ import Foundation
 
 
 extension String {
+    /**
+     Convert string to `Object` with ISO 8601 date decoding strategy.
+     The strategy that formats dates according to the ISO 8601 standard.
+     */
     func toObject<T: Decodable>(_ type: T.Type) -> T? {
         do {
             if let d = data(using: .utf8) {

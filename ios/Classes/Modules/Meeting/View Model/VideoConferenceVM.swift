@@ -81,6 +81,10 @@ class VideoConferenceVM {
         }
     }
     
+    /**
+     - Parameter uuid: `String`; UUID from response get meeting detail
+     - Parameter attendee:`AttendeeEntity`
+     */
     init(uuid: String,
          attendee: AttendeeEntity,
          createMeetingResponse: AmazonChimeSDK.CreateMeetingResponse,
@@ -165,7 +169,7 @@ extension VideoConferenceVM {
         SVProgressHUD.show()
         let meetingId = meetingSessionConfig.meetingId
         do {
-            let payload = try AppEventType.MettingSessionRequestEnd.payload(args: ["MeetingID": meetingId])
+            let payload = try AppEventType.MeetingSessionRequestEnd.payload(args: ["MeetingID": meetingId])
             eventSink?(payload)
         } catch {
             logger.fault(msg: error.localizedDescription)
