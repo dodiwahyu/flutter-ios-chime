@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
                        DESC
-  s.homepage         = ''
+  s.homepage         = 'https://www.dodi.dev'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Tokio Marine Life Insurence' => 'me@dodi.dev' }
   s.source           = { :path => '.' }

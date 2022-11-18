@@ -10,6 +10,7 @@ enum FLUTTER_METHOD: String {
     case endMeeting
     case meetingBeingRecorded
     case meetingStopRecording
+    case test
 }
 
 public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
@@ -44,6 +45,9 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             handleMeetingBeingRecorded(args: call.arguments, result: result)
         case .meetingStopRecording:
             handleMeetingStopRecording(args: call.arguments, result: result)
+        case .test:
+            handleTest()
+            break
         }
     }
     
@@ -72,6 +76,10 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
     
     private func handleMeetingStopRecording(args: Any?, result: @escaping FlutterResult) {
         MeetingModule.shared.onMeetingStopRecording?()
+    }
+    
+    private func handleTest() {
+        
     }
 }
 

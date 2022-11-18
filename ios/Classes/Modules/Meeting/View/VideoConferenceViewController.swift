@@ -16,15 +16,18 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var prymaryScreenView: DefaultVideoRenderView!
     @IBOutlet weak var secondaryScreenView: DefaultVideoRenderView!
     
-    @IBOutlet weak var viewTapBar: UIView!
-    @IBOutlet weak var soundButton: UIButton!
-    @IBOutlet weak var cameraButton: UIButton!
+    @IBOutlet weak var indicatorView: UIView!
+    @IBOutlet weak var recordTimeLabel: UILabel!
+    
+    @IBOutlet weak var contentStackView: UIStackView!
     @IBOutlet weak var endButton: UIButton!
     @IBOutlet weak var micButton: UIButton!
-    @IBOutlet weak var optionButton: UIButton!
+    @IBOutlet weak var scriptButton: UIButton!
+    
+    @IBOutlet weak var scriptContentView: UIView!
     @IBOutlet weak var textView: UITextView!
     
-    @IBOutlet weak var bottomConstraintMenu: NSLayoutConstraint!
+    @IBOutlet weak var bottomConstraintSecondVideoView: NSLayoutConstraint!
     
     init() {
         let bundle = Bundle.getBundle(for: VideoConferenceViewController.self)
@@ -50,22 +53,13 @@ class VideoConferenceViewController: UIViewController {
         }
         
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-    }
-    
-    @IBAction func didTapSoundButton(_ sender: UIButton) {
-        
-    }
-    
-    @IBAction func didTapCameraButton(_ sender: UIButton) {
-        self.viewModel.enableCamera = !self.viewModel.enableCamera
-        self.viewModel.enableCamera ? sender.setTitle("Disable", for: .normal) : sender.setTitle("Enable", for: .normal)
     }
     
     @IBAction func didTapEndButton(_ sender: UIButton) {
@@ -77,54 +71,41 @@ class VideoConferenceViewController: UIViewController {
         self.viewModel.isMute ? sender.setTitle("Unmute", for: .normal) : sender.setTitle("Mute", for: .normal)
     }
     
-    @IBAction func didTapOptionButton(_ sender: UIButton) {
-        let alert = UIAlertController(title: "Option", message: nil, preferredStyle: .actionSheet)
-        let toggleScript = UIAlertAction(title: "Toggle script", style: .default) { (_) in
-            self.toggleScript()
-        }
-        alert.addAction(toggleScript)
-        
-        let buttonRecord = UIAlertAction(title: viewModel.isRecording ? "Stop record" : "Start record", style: .destructive) { (_) in
-            
-            if self.viewModel.isRecording {
-                self.viewModel.requestStopRecording()
-            } else {
-                self.viewModel.requestRecordAll()
-            }
-        }
-        alert.addAction(buttonRecord)
-        
-        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
-        alert.addAction(cancel)
-        
-        self.present(alert, animated: true)
+    // MARK: Private
+    private func resetState() {
+        indicatorView.isHidden = true
+        recordTimeLabel.isHidden = true
+        recordTimeLabel.text = ""
+        scriptContentView.isHidden = true
     }
     
-    // MARK: Private
+    private func showRecordTime() {
+        indicatorView.isHidden = false
+        recordTimeLabel.isHidden = false
+    }
+    
     private func setupUI() {
-        updateLayoutTabBar()
+        prymaryScreenView.backgroundColor = .white
+        secondaryScreenView.backgroundColor = .clear
         
-        soundButton.setTitle("", for: .normal)
-        cameraButton.setTitle("", for: .normal)
         endButton.setTitle("", for: .normal)
         micButton.setTitle("", for: .normal)
-        optionButton.setTitle("", for: .normal)
+        scriptButton.setTitle("", for: .normal)
+        
+        scriptContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
+        resetState()
     }
     
     private func toggleScript() {
         UIView.animate(withDuration: 0.3, delay: 0, options: .beginFromCurrentState) {
-            self.textView.isHidden = !self.textView.isHidden
+            self.scriptContentView.isHidden = !self.scriptContentView.isHidden
             let bottomMargin: CGFloat = 16.0
-            self.bottomConstraintMenu.constant = self.textView.isHidden ? self.view.safeAreaInsets.bottom + bottomMargin : bottomMargin
+            self.bottomConstraintSecondVideoView.constant = self.scriptContentView.isHidden ? self.view.safeAreaInsets.bottom + bottomMargin : bottomMargin
             self.view.layoutIfNeeded()
         }
     }
     
-    private func updateLayoutTabBar() {
-        viewTapBar.layer.cornerRadius = viewTapBar.frame.height / 2
-        viewTapBar.backgroundColor = Colors.primary
-    }
-
     private func bindLocalScreen(_ args: (DefaultMeetingSession, Int)) {
         args.0.audioVideo.bindVideoView(videoView: prymaryScreenView, tileId: args.1)
     }
@@ -132,7 +113,6 @@ class VideoConferenceViewController: UIViewController {
     private func bindContentScreen(_ args: (DefaultMeetingSession, Int)) {
         args.0.audioVideo.bindVideoView(videoView: secondaryScreenView, tileId: args.1)
     }
-    
 }
 
 
@@ -145,5 +125,4 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
     func vmDidBindContentScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
         session.audioVideo.bindVideoView(videoView: secondaryScreenView, tileId: tileId)
     }
-    
 }
