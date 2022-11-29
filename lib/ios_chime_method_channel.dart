@@ -45,4 +45,9 @@ class MethodChannelIosChime extends IosChimePlatform {
   Future<void> showToast(String message) {
     return methodChannel.invokeMethod('showToast', message);
   }
+
+  @override
+  Future<void> test() {
+    return methodChannel.invokeListMethod('test');
+  }
 }

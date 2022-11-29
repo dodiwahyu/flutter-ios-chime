@@ -26,6 +26,7 @@ Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
   s.dependency 'AmazonChimeSDK-Bitcode'
   s.dependency 'Toast-Swift', '~> 5.0.1'
   s.dependency 'SVProgressHUD'
+  s.dependency 'Connectivity'
   
   # Minimum iOS version
   s.platform = :ios, '12.0'

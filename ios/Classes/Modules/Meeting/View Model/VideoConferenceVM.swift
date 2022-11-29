@@ -10,6 +10,9 @@ import AmazonChimeSDK
 import AmazonChimeSDKMedia
 import SVProgressHUD
 
+let MAX_RECORD_TIME: Double = 2
+let WARNING_RECORD_TIME: Double = 1
+
 protocol VideoConferenceVMOutput: AnyObject {
     func vmDidBindLocalScreen(for session: DefaultMeetingSession, tileId: Int)
     func vmDidBindContentScreen(for session: DefaultMeetingSession, tileId: Int)
@@ -28,6 +31,20 @@ class VideoConferenceVM {
     var meetingSession: DefaultMeetingSession!
     var listAttendeeJoinded: [AttendeeInfo] = []
     var isRecording: Bool = false
+    
+    // Timer
+    private var startTime: Date?
+    private var maxRecordTime: Date?
+    private var recordTimer: Timer?
+    
+    
+    var onTimeDidTick: ((String) -> Void)?
+    var onTimeAlert: ((String) -> Void)?
+    var onTimeDidStop: (() -> Void)?
+    
+    var onRecordingDidStarted: (() -> Void)?
+    var onRecordingDidStopped: (() -> Void)?
+    
     
     var eventSink: FlutterEventSink? {
         return APPStreamHandler.shared.getEventSink()
@@ -161,6 +178,53 @@ class VideoConferenceVM {
         let status = meetingSession.audioVideo.realtimeLocalUnmute()
         completion?(status)
     }
+    
+    func resetTimerRecord() {
+        recordTimer?.invalidate()
+        recordTimer = nil
+        startTime = nil
+    }
+}
+
+extension VideoConferenceVM {
+    func fireTimeRecord() {
+        if recordTimer == nil {
+            let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timeRecordDidFire(_:)), userInfo: nil, repeats: true)
+            recordTimer = timer
+        }
+        
+        recordTimer?.fire()
+        maxRecordTime = Date().addingTimeInterval(TimeInterval(MAX_RECORD_TIME * 60))
+    }
+    
+    @objc
+    private func timeRecordDidFire(_ sender: Timer) {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .positional
+        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.zeroFormattingBehavior = .pad
+        
+        let startDate = startTime ?? Date()
+        let now = Date()
+        let elapsed = now - startDate
+        
+        let max: Double = Double(60 * MAX_RECORD_TIME) // 10 minutes
+        if (elapsed <= max) {
+            if let strElapsed = formatter.string(from: elapsed) {
+                self.onTimeDidTick?(strElapsed)
+            }
+            
+            if let endTime = self.maxRecordTime,
+               elapsed >= (max - Double(60 * WARNING_RECORD_TIME)) {
+                let remaining = endTime - now
+                if let strRemaining = formatter.string(from: remaining) {
+                    self.onTimeAlert?(strRemaining)
+                }
+            }
+        }
+        
+        startTime = startDate
+    }
 }
 
 // Comunting with dart
@@ -218,6 +282,8 @@ extension VideoConferenceVM {
     func meetingBeingRecorded(_ completion: DefaultPluginCompletion? = nil) {
         SVProgressHUD.showSuccess(withStatus: "Start recording")
         isRecording = true
+        onRecordingDidStarted?()
+        fireTimeRecord()
         completion?()
     }
     

@@ -23,6 +23,26 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
         let eventChannel = FlutterEventChannel(name: "IOSChimePluginEvents", binaryMessenger: registrar.messenger())
         eventChannel.setStreamHandler(APPStreamHandler.shared)
         
+        let bundle = Bundle.main
+        let fonts = [
+            "assets/fonts/Poppins-Regular.ttf",
+            "assets/fonts/Poppins-Medium.ttf",
+            "assets/fonts/Poppins-Bold.ttf"
+        ]
+        
+        for font in fonts {
+            let fontKey = registrar.lookupKey(forAsset: font)
+            let path = bundle.path(forResource: fontKey, ofType: nil)
+            let fontData = NSData(contentsOfFile: path ?? "")
+            let dataProvider = CGDataProvider(data: fontData!)
+            let fontRef = CGFont(dataProvider!)
+            var errorRef: Unmanaged<CFError>? = nil
+            if let fr = fontRef {
+             CTFontManagerRegisterGraphicsFont(fr, &errorRef)
+            } else {
+                print("Failed to register font \(font)")
+            }
+        }
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -79,6 +99,28 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
     }
     
     private func handleTest() {
+        let fontRegular = UIFont(name: "Poppins-Regular", size: 12.0)
+        let fontMedium = UIFont(name: "Poppins-Medium", size: 12.0)
+        let fontBold = UIFont(name: "Poppins-Bold", size: 12.0)
+//        print("Poppins-Regular  \(fontRegular != nil)")
+        
+        guard let topController = UIApplication.getTopViewController() else {
+            return
+        }
+        
+//        DialogVC.show(from: topController, title: "Confirmation", message: "Are you sure want to end the call?", onYes: nil, onNo: nil)
+        
+
+        let attendee = AttendeeEntity(externalUserId: "", attendeeId: "", joinToken: "")
+        let meeting = CreateMeetingResponse(meeting: Meeting(externalMeetingId: "", mediaPlacement: MediaPlacement(audioFallbackUrl: "", audioHostUrl: "", signalingUrl: "", turnControlUrl: ""), mediaRegion: "", meetingId: ""))
+        let attendeRes = CreateAttendeeResponse(attendee: Attendee(attendeeId: "", externalUserId: "", joinToken: ""))
+
+        let viewModel = VideoConferenceVM(uuid: UUID().uuidString, attendee: attendee, createMeetingResponse: meeting, createAttendeeResponse: attendeRes, isAsAgent: true)
+        let vc = VideoConferenceViewController()
+        vc.viewModel = viewModel
+        vc.modalPresentationStyle = .fullScreen
+
+        topController.present(vc, animated: true)
         
     }
 }

@@ -51,4 +51,8 @@ abstract class IosChimePlatform extends PlatformInterface {
   Future<void> showToast(String message) {
     throw UnimplementedError('showToast() has not been implemented');
   }
+
+  Future<void> test() {
+    throw UnimplementedError('test() has not been implemented');
+  }
 }

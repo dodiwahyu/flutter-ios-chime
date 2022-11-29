@@ -37,4 +37,8 @@ class IosChime {
   static Future<void> showToast(String message) {
     return IosChimePlatform.instance.showToast(message);
   }
+  
+  static Future<void> test() {
+    return IosChimePlatform.instance.test();
+  }
 }
