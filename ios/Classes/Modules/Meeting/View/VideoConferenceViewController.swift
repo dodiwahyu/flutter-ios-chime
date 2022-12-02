@@ -80,6 +80,11 @@ class VideoConferenceViewController: UIViewController {
         super.viewWillDisappear(animated)
     }
     
+    @IBAction func didTapSetting(_ sender: UIButton) {
+        let vc = SettingViewController(meetingSession: viewModel.meetingSession)
+        self.present(vc, animated: true)
+    }
+    
     @IBAction func didTapEndButton(_ sender: UIButton) {
         viewModel.requestEndMeeting()
     }
@@ -131,7 +136,9 @@ class VideoConferenceViewController: UIViewController {
         titleLabel.font = AppFonts.font(size: 14.0, weight: .semibold)
         titleLabel.font = AppFonts.font(size: 14.0, weight: .semibold)
         backButton.titleLabel?.font = AppFonts.font(size: 14.0, weight: .semibold)
+        backButton.titleLabel?.textColor = AppColors.primary
         textView.font = AppFonts.font(size: 12.0, weight: .medium)
+        textView.textColor = AppColors.textColor
         
         recordTimeLabel.textColor = .black
         contentRecordingView.backgroundColor = UIColor.white.withAlphaComponent(0.4)

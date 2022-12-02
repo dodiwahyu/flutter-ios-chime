@@ -259,6 +259,9 @@
                             </constraints>
                             <state key="normal" title="Button"/>
                             <buttonConfiguration key="configuration" style="plain" image="icon_more"/>
+                            <connections>
+                                <action selector="didTapSetting:" destination="-1" eventType="touchUpInside" id="37h-PX-pbw"/>
+                            </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Zr-di-W7U">
                             <rect key="frame" x="6" y="48" width="72" height="35"/>
