@@ -196,8 +196,8 @@ class VideoConferenceViewController: UIViewController {
             self?.showStatusAlert(with: "Waktu recording tersisa \(args)")
         }
         
-        viewModel.onTimeDidStop = {[weak self] in
-            print("Record time did stoped")
+        viewModel.onTimesup = {[weak self] in
+            self?.dismiss(animated: true)
         }
     }
     

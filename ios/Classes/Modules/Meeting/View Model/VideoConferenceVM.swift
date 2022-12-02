@@ -40,7 +40,7 @@ class VideoConferenceVM {
     
     var onTimeDidTick: ((String) -> Void)?
     var onTimeAlert: ((String) -> Void)?
-    var onTimeDidStop: (() -> Void)?
+    var onTimesup: (() -> Void)?
     
     var onRecordingDidStarted: (() -> Void)?
     var onRecordingDidStopped: (() -> Void)?
@@ -187,6 +187,12 @@ class VideoConferenceVM {
 }
 
 extension VideoConferenceVM {
+    func stopRecordTimer() {
+        recordTimer?.invalidate()
+        recordTimer = nil
+        onTimesup?()
+    }
+    
     func fireTimeRecord() {
         if recordTimer == nil {
             let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timeRecordDidFire(_:)), userInfo: nil, repeats: true)
@@ -221,6 +227,8 @@ extension VideoConferenceVM {
                     self.onTimeAlert?(strRemaining)
                 }
             }
+        } else {
+            stopRecordTimer()
         }
         
         startTime = startDate
