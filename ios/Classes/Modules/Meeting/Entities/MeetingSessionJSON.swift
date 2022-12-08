@@ -2,43 +2,55 @@ import Foundation
 
 // MARK: - VideoConferenceJSON
 struct VideoConferenceJSON: Codable {
-    let uuid, spajNumber, product, namePh: String
-    let emailPh, phoneNumberPh, insuredName, insuredEmail: String
-    let insuredPhoneNumber: String
-    let meetingJSON: MeetingJSON
-    let attendee1, attendee2: AttendeeJSON
-
+    let uuid: String?
+    let spajNo: String?
+    let attendee1: AttendeeJSON?
+    let attendee2: AttendeeJSON?
+    let meetingJson: MeetingJSON?
+    let recordUrl: String?
+    let recordDate: String?
+    let wordingText: String?
+    let agentJoin: Bool?
+    let clientJoin: Bool?
+    
     enum CodingKeys: String, CodingKey {
-        case uuid, spajNumber, product
-        case namePh = "name_ph"
-        case emailPh = "email_ph"
-        case phoneNumberPh = "phone_number_ph"
-        case insuredName = "insured_name"
-        case insuredEmail = "insured_email"
-        case insuredPhoneNumber = "insured_phone_number"
-        case meetingJSON = "meetingJson"
-        case attendee1, attendee2
+        case uuid
+        case spajNo
+        case attendee1
+        case attendee2
+        case meetingJson
+        case recordUrl
+        case recordDate
+        case wordingText
+        case agentJoin
+        case clientJoin
     }
     
     func convert(isAgent: Bool = false) -> MeetingSessionEntity {
         let meetingEntity = MeetingEntity(
-            meetingId: meetingJSON.meetingID,
-            externalMeetingId: meetingJSON.externalMeetingID,
-            mediaPlacement: meetingJSON.mediaPlacement.convert(),
-            mediaRegion: meetingJSON.mediaRegion
+            meetingId: uuid,
+            externalMeetingId: spajNo,
+            mediaPlacement: meetingJson?.mediaPlacement.convert(),
+            mediaRegion: meetingJson?.mediaRegion
         )
         
         let attendee = isAgent ? attendee1 : attendee2
-        let attendeEntity = AttendeeEntity(externalUserId: attendee.externalUserID, attendeeId: attendee.attendeeID, joinToken: attendee.joinToken)
+        let attendeEntity = AttendeeEntity(externalUserId: attendee?.externalUserID ?? "", attendeeId: attendee?.attendeeID ?? "", joinToken: attendee?.joinToken ?? "")
         
-        return MeetingSessionEntity(uuid: uuid, meeting: meetingEntity, attendee: attendeEntity, asAgent: isAgent)
+        return MeetingSessionEntity(
+            uuid: uuid,
+            spajNumber: spajNo,
+            meeting: meetingEntity,
+            attendee: attendeEntity,
+            asAgent: isAgent
+        )
     }
 }
 
 // MARK: - Attendee
 struct AttendeeJSON: Codable {
     let externalUserID, attendeeID, joinToken: String
-
+    
     enum CodingKeys: String, CodingKey {
         case externalUserID = "externalUserId"
         case attendeeID = "attendeeId"
@@ -51,7 +63,7 @@ struct MeetingJSON: Codable {
     let meetingID, externalMeetingID: String
     let mediaPlacement: MediaPlacementJSON
     let mediaRegion: String
-
+    
     enum CodingKeys: String, CodingKey {
         case meetingID = "meetingId"
         case externalMeetingID = "externalMeetingId"
@@ -64,7 +76,7 @@ struct MediaPlacementJSON: Codable {
     let audioHostURL, audioFallbackURL, screenDataURL, screenSharingURL: String
     let screenViewingURL, signalingURL: String
     let turnControlURL, eventIngestionURL: String
-
+    
     enum CodingKeys: String, CodingKey {
         case audioHostURL = "audioHostUrl"
         case audioFallbackURL = "audioFallbackUrl"

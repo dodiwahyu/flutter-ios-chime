@@ -73,7 +73,6 @@ class VideoConferenceViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        viewModel.fireTimeRecord()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -86,7 +85,11 @@ class VideoConferenceViewController: UIViewController {
     }
     
     @IBAction func didTapEndButton(_ sender: UIButton) {
-        viewModel.requestEndMeeting()
+        let dialog = DialogVC(title: "Warning", message: "Akah anda yakin ingin mengakhiri video conference")
+        
+        dialog.onYes = {[weak self] in
+            self?.viewModel.requestEndMeeting()
+        }
     }
     
     @IBAction func didTapMicBUtton(_ sender: UIButton) {
@@ -99,6 +102,15 @@ class VideoConferenceViewController: UIViewController {
     @IBAction func didTapToggleScript(_ sender: UIButton) {
         self.toggleScript()
     }
+    
+    @IBAction func didTapBackButton(_ sender: Any) {
+        let dialog = DialogVC(title: "Warning", message: "Akah anda yakin ingin mengakhiri video conference")
+        
+        dialog.onYes = {[weak self] in
+            self?.viewModel.requestEndMeeting()
+        }
+    }
+    
     
     // MARK: Private
     private func initConnectivity() {

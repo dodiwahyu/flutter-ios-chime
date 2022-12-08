@@ -271,6 +271,9 @@
                             </constraints>
                             <state key="normal" title="Button"/>
                             <buttonConfiguration key="configuration" style="plain" title="Back"/>
+                            <connections>
+                                <action selector="didTapBackButton:" destination="-1" eventType="touchUpInside" id="JXS-6q-mHr"/>
+                            </connections>
                         </button>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Video Recording" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KOX-g9-BmG">
                             <rect key="frame" x="132.33333333333334" y="55.333333333333336" width="125.66666666666666" height="20.333333333333336"/>

@@ -10,6 +10,7 @@ import AmazonChimeSDK
 
 struct MeetingSessionEntity: Codable {
     let uuid: String?
+    let spajNumber: String?
     let meeting: MeetingEntity?
     let attendee: AttendeeEntity?
     let asAgent: Bool?

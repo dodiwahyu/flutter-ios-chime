@@ -13,6 +13,7 @@ import Foundation
  If need add some listener from native to dart please update this section
  */
 enum AppEventType: String, Codable {
+    case JoinRoomByAgent
     case MeetingSessionRequestEnd
     case ReqRecordMeetingAttendee
     case ReqRecordMeetingAll

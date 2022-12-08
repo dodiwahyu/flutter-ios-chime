@@ -23,6 +23,7 @@ class VideoConferenceVM {
     weak var output: VideoConferenceVMOutput?
     
     var meetingUUID: String!
+    var spajNumber: String!
     var currentAttendee: AttendeeEntity!
     var isAsAgent: Bool = false
     
@@ -103,12 +104,14 @@ class VideoConferenceVM {
      - Parameter attendee:`AttendeeEntity`
      */
     init(uuid: String,
+         spajNumber: String,
          attendee: AttendeeEntity,
          createMeetingResponse: AmazonChimeSDK.CreateMeetingResponse,
          createAttendeeResponse: AmazonChimeSDK.CreateAttendeeResponse,
          isAsAgent: Bool
     ) {
         self.meetingUUID = uuid
+        self.spajNumber = spajNumber
         self.currentAttendee = attendee
         self.isAsAgent = isAsAgent
         self.meetingSessionConfig = MeetingSessionConfiguration(
@@ -283,6 +286,16 @@ extension VideoConferenceVM {
             logger.fault(msg: error.localizedDescription)
         }
     }
+    
+    func requestJoinRoomByAgent() {
+        do {
+            let payload = try AppEventType.JoinRoomByAgent.payload(args: ["SpajNumber": spajNumber])
+            SVProgressHUD.show()
+            eventSink?(payload)
+        } catch {
+            logger.fault(msg: error.localizedDescription)
+        }
+    }
 }
 
 // Response from dart
@@ -428,7 +441,11 @@ extension VideoConferenceVM: RealtimeObserver {
            listAttendeeJoinded.first(where: {
                $0.attendeeId != currentAttendee.attendeeId
            }) != nil {
-            self.requestRecordAll()
+            // Only for POC
+            // self.requestRecordAll()
+            
+            // For AMS
+            self.fireTimeRecord()
         }
     }
     

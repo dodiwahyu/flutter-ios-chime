@@ -55,6 +55,7 @@ class MeetingModule {
         queueQroup.notify(queue: .main) { [weak self] in
             if isMicEnabled, isCameraEnabled {
                 guard let meetingUUID = sessionEntity.uuid,
+                      let spajNumber = sessionEntity.spajNumber,
                       let attendee = sessionEntity.attendee,
                       let meetingResponse = sessionEntity.getMeetingResponse(),
                       let attendeeResponse = sessionEntity.getAttendeeResponse()
@@ -67,6 +68,7 @@ class MeetingModule {
                 let asAgent = sessionEntity.asAgent ?? false
                 let vm = VideoConferenceVM(
                     uuid: meetingUUID,
+                    spajNumber: spajNumber,
                     attendee: attendee,
                     createMeetingResponse: meetingResponse,
                     createAttendeeResponse: attendeeResponse,

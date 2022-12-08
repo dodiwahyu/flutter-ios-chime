@@ -15,7 +15,7 @@ Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.resource_bundles = {
-    'ios_chime' => ['Classes/**/*.xib', 'Assets/**/*']
+    'ios_chime' => ['Classes/**/*.xib','Assets/*.lproj/*.strings', 'Assets/**/*']
   }
 
   # The following dependencies are required for the Amazon Chime SDK
