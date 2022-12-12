@@ -23,6 +23,15 @@ abstract class IosChimePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<bool?> requestCameraUsage() {
+    throw UnimplementedError('requestCameraUsage() has not been implemented.');
+  }
+
+  Future<bool?> requestRecordPermissions() {
+    throw UnimplementedError(
+        'requestRecordPermissions() has not been implemented.');
+  }
+
   Future<String?> getPlatformVersion() {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
@@ -50,6 +59,10 @@ abstract class IosChimePlatform extends PlatformInterface {
 
   Future<void> showToast(String message) {
     throw UnimplementedError('showToast() has not been implemented');
+  }
+
+  Future<void> setJoinRoomByAgent(bool isSuccess) {
+    throw UnimplementedError('setJoinRoomByAgent() has not been implemented');
   }
 
   Future<void> test() {

@@ -14,6 +14,14 @@ class IosChime {
     return IosChimePlatform.instance.getPlatformVersion();
   }
 
+  static Future<bool> requestCameraUsage() async {
+    return await IosChimePlatform.instance.requestCameraUsage() ?? false;
+  }
+
+  static Future<bool> requestRecordPermissions() async {
+    return await IosChimePlatform.instance.requestRecordPermissions() ?? false;
+  }
+
   static Future<void> hideLoading() {
     return IosChimePlatform.instance.hideLoading();
   }
@@ -37,7 +45,11 @@ class IosChime {
   static Future<void> showToast(String message) {
     return IosChimePlatform.instance.showToast(message);
   }
-  
+
+  static Future<void> setJoinRoomByAgent(bool isSuccess) {
+    return IosChimePlatform.instance.setJoinRoomByAgent(isSuccess);
+  }
+
   static Future<void> test() {
     return IosChimePlatform.instance.test();
   }

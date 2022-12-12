@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -54,7 +53,7 @@
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <constraints>
                                         <constraint firstItem="3L2-ER-Ute" firstAttribute="top" secondItem="gGi-GF-ZUK" secondAttribute="bottom" constant="8" id="1DP-cW-GVI"/>
                                         <constraint firstAttribute="bottom" secondItem="g7n-j3-shb" secondAttribute="bottom" id="LAZ-PF-ZGz"/>
@@ -95,7 +94,7 @@
                             </constraints>
                         </stackView>
                     </subviews>
-                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="27p-yc-eci" secondAttribute="trailing" constant="24" id="UY8-tD-5XC"/>
                         <constraint firstItem="27p-yc-eci" firstAttribute="top" secondItem="6Ck-KN-5Lj" secondAttribute="top" constant="24" id="dv4-ny-OD7"/>
@@ -116,8 +115,5 @@
     </objects>
     <resources>
         <image name="shape_confirm" width="96" height="120"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>

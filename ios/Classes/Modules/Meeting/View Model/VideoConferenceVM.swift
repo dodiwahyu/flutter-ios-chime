@@ -32,6 +32,7 @@ class VideoConferenceVM {
     var meetingSession: DefaultMeetingSession!
     var listAttendeeJoinded: [AttendeeInfo] = []
     var isRecording: Bool = false
+    var isJoinned: Bool?
     
     // Timer
     private var startTime: Date?
@@ -125,8 +126,8 @@ class VideoConferenceVM {
     }
     
     func addObserver() {
-        meetingSession.audioVideo.addAudioVideoObserver(observer: self)
         meetingSession.audioVideo.addRealtimeObserver(observer: self)
+        meetingSession.audioVideo.addAudioVideoObserver(observer: self)
         meetingSession.audioVideo.addVideoTileObserver(observer: self)
         meetingSession.audioVideo.addDeviceChangeObserver(observer: self)
         meetingSession.audioVideo.addActiveSpeakerObserver(policy: DefaultActiveSpeakerPolicy(), observer: self)
@@ -157,6 +158,7 @@ class VideoConferenceVM {
     func startLocalVideo(completion: BoolCompletion? = nil) {
         do {
             try meetingSession.audioVideo.startLocalVideo()
+            requestJoinRoomByAgent()
             completion?(true)
         } catch {
             logger.error(msg: error.localizedDescription)
@@ -288,6 +290,10 @@ extension VideoConferenceVM {
     }
     
     func requestJoinRoomByAgent() {
+        guard isJoinned == nil else { return }
+        
+        isJoinned = false
+        
         do {
             let payload = try AppEventType.JoinRoomByAgent.payload(args: ["SpajNumber": spajNumber])
             SVProgressHUD.show()
@@ -318,6 +324,13 @@ extension VideoConferenceVM {
         meetingSession.audioVideo.stop()
         completion?()
     }
+    
+    // If Join Room By Agent failed set `isJoinned` to nil
+    // If success set `isJoinned` true
+    func setJoinRoomByAgent(_ isSuccess: Bool) {
+        isJoinned = isSuccess ? true : nil
+        SVProgressHUD.dismiss()
+    }
 }
 
 extension VideoConferenceVM: VideoTileObserver {
@@ -328,20 +341,21 @@ extension VideoConferenceVM: VideoTileObserver {
             // TODO: Screen share & Video
             output?.vmDidBindContentScreen(for: meetingSession, tileId: tileState.tileId)
         }
-        print("TEST ==> videoTileDidAdd id \(tileState.tileId)")
+        
+        logger.info(msg: "ios_chime ==> videoTileDidAdd id \(tileState.tileId)")
     }
     
     func videoTileDidRemove(tileState: AmazonChimeSDK.VideoTileState) {
         meetingSession.audioVideo.unbindVideoView(tileId: tileState.tileId)
-        print("TEST ==> videoTileDidRemove id \(tileState.tileId)")
+        logger.info(msg: "ios_chime ==> videoTileDidRemove id \(tileState.tileId)")
     }
     
     func videoTileDidPause(tileState: AmazonChimeSDK.VideoTileState) {
-        print("TEST ==> videoTileDidPause id \(tileState.tileId)")
+        logger.info(msg: "ios_chime ==> videoTileDidPause id \(tileState.tileId)")
     }
     
     func videoTileDidResume(tileState: AmazonChimeSDK.VideoTileState) {
-        print("TEST ==> videoTileDidResume id \(tileState.tileId)")
+        logger.info(msg: "ios_chime ==> videoTileDidResume id \(tileState.tileId)")
     }
     
     func videoTileSizeDidChange(tileState: AmazonChimeSDK.VideoTileState) {
@@ -380,15 +394,15 @@ extension VideoConferenceVM: AudioVideoObserver {
     }
     
     func videoSessionDidStartConnecting() {
-        print("Session did start connecting")
+        logger.info(msg: "ios_chime ==> Session did start connecting")
     }
     
     func videoSessionDidStartWithStatus(sessionStatus: AmazonChimeSDK.MeetingSessionStatus) {
-        print("vide did statr with status \(sessionStatus)")
+        logger.info(msg: "ios_chime ==> video did start with status \(sessionStatus)")
     }
     
     func videoSessionDidStopWithStatus(sessionStatus: AmazonChimeSDK.MeetingSessionStatus) {
-        
+        logger.info(msg: "ios_chime ==> video did stop with status \(sessionStatus)")
     }
     
     func remoteVideoSourcesDidBecomeAvailable(sources: [AmazonChimeSDK.RemoteVideoSource]) {
@@ -427,11 +441,15 @@ extension VideoConferenceVM: RealtimeObserver {
     }
     
     func attendeesDidJoin(attendeeInfo: [AmazonChimeSDK.AttendeeInfo]) {
-        print("attendeesDidJoin APP => \(attendeeInfo)")
+        logger.info(msg: "ios_chime ==> attendeesDidJoin APP => \(attendeeInfo)")
         
         for info in attendeeInfo {
             if !listAttendeeJoinded.contains(where: {$0.attendeeId == info.attendeeId}) {
                 listAttendeeJoinded.append(info)
+            }
+            
+            if currentAttendee.attendeeId == info.attendeeId {
+                requestJoinRoomByAgent()
             }
         }
     

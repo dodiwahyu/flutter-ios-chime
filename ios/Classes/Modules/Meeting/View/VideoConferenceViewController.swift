@@ -38,12 +38,13 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var scriptContentView: UIView!
     @IBOutlet weak var textView: UITextView!
     
-    @IBOutlet weak var maskPrimaryScreenView: UIView!
+    @IBOutlet weak var maskSecondaryScreenView: UIView!
     @IBOutlet weak var maskDescLabel: UILabel!
     
     @IBOutlet weak var bottomConstraintSecondVideoView: NSLayoutConstraint!
     
     private var connectivity = Connectivity()
+    private var isSessionStarted = false
     
     init() {
         let bundle = Bundle.getBundle(for: VideoConferenceViewController.self)
@@ -73,6 +74,7 @@ class VideoConferenceViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        startVideoSessions()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -85,11 +87,15 @@ class VideoConferenceViewController: UIViewController {
     }
     
     @IBAction func didTapEndButton(_ sender: UIButton) {
-        let dialog = DialogVC(title: "Warning", message: "Akah anda yakin ingin mengakhiri video conference")
-        
-        dialog.onYes = {[weak self] in
-            self?.viewModel.requestEndMeeting()
-        }
+        DialogVC.show(
+            from: self,
+            title: "Warning",
+            message: "Akah anda yakin ingin mengakhiri video conference",
+            onYes: {[weak self] in
+                self?.viewModel.requestEndMeeting()
+            },
+            onNo: nil
+        )
     }
     
     @IBAction func didTapMicBUtton(_ sender: UIButton) {
@@ -104,11 +110,13 @@ class VideoConferenceViewController: UIViewController {
     }
     
     @IBAction func didTapBackButton(_ sender: Any) {
-        let dialog = DialogVC(title: "Warning", message: "Akah anda yakin ingin mengakhiri video conference")
-        
-        dialog.onYes = {[weak self] in
-            self?.viewModel.requestEndMeeting()
-        }
+        DialogVC.show(
+            from: self,
+            title: "Warning",
+            message: "Akah anda yakin ingin mengakhiri video conference",
+            onYes: {[weak self] in
+                self?.viewModel.requestEndMeeting()
+            }, onNo: nil)
     }
     
     
@@ -136,7 +144,8 @@ class VideoConferenceViewController: UIViewController {
         secondaryScreenView.backgroundColor = .clear
         statusAlertView.backgroundColor = AppColors.primary
         scriptContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        maskPrimaryScreenView.backgroundColor = AppColors.grey
+        maskSecondaryScreenView.backgroundColor = AppColors.grey
+        maskSecondaryScreenView.isHidden = false
         
         settingButton.setTitle("", for: .normal)
         endButton.setTitle("", for: .normal)
@@ -189,10 +198,6 @@ class VideoConferenceViewController: UIViewController {
     private func bindView() {
         viewModel.addObserver()
         viewModel.output = self
-        viewModel.startMeeting {[weak self] isSuccess in
-            guard isSuccess, let self else { return }
-            self.viewModel.startLocalVideo()
-        }
         
         viewModel.onRecordingDidStarted = {[weak self] in
             print("Record did started")
@@ -210,6 +215,18 @@ class VideoConferenceViewController: UIViewController {
         
         viewModel.onTimesup = {[weak self] in
             self?.dismiss(animated: true)
+        }
+    }
+    
+    func startVideoSessions() {
+        if isSessionStarted {
+            return
+        }
+        
+        viewModel.startMeeting {[weak self] isSuccess in
+            self?.isSessionStarted = isSuccess
+            guard isSuccess, let self else { return }
+            self.viewModel.startLocalVideo()
         }
     }
     
@@ -256,6 +273,7 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
     }
     
     func vmDidBindContentScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
+        maskSecondaryScreenView.isHidden = true
         session.audioVideo.bindVideoView(videoView: secondaryScreenView, tileId: tileId)
     }
 }

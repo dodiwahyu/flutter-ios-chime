@@ -22,6 +22,16 @@ class MethodChannelIosChime extends IosChimePlatform {
   }
 
   @override
+  Future<bool?> requestCameraUsage() {
+    return methodChannel.invokeMethod('requestCameraUsage');
+  }
+
+  @override
+  Future<bool?> requestRecordPermissions() {
+    return methodChannel.invokeMethod('requestRecordPermission');
+  }
+
+  @override
   Future<void> joinMeeting({required String? params}) {
     return methodChannel.invokeMapMethod('joinMeeting', params);
   }
@@ -44,6 +54,11 @@ class MethodChannelIosChime extends IosChimePlatform {
   @override
   Future<void> showToast(String message) {
     return methodChannel.invokeMethod('showToast', message);
+  }
+
+  @override
+  Future<void> setJoinRoomByAgent(bool isSuccess) {
+    return methodChannel.invokeListMethod('setJoinRoomByAgent', isSuccess);
   }
 
   @override

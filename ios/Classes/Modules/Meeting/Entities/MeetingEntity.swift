@@ -15,10 +15,10 @@ struct MeetingEntity: Codable {
     let mediaRegion: String?
     
     private enum CodingKeys: String, CodingKey {
-        case meetingId = "MeetingId"
-        case externalMeetingId = "ExternalMeetingId"
-        case mediaPlacement = "MediaPlacement"
-        case mediaRegion = "MediaRegion"
+        case meetingId
+        case externalMeetingId
+        case mediaPlacement
+        case mediaRegion
     }
     
     init(meetingId: String?,

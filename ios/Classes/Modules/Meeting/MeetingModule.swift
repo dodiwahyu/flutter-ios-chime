@@ -17,6 +17,7 @@ class MeetingModule {
     var onEndMeeting: (() -> Void)?
     var onMeetingBeignRecorded: (() -> Void)?
     var onMeetingStopRecording: (() -> Void)?
+    var onJoinRoomByAgent: ((Bool) -> Void)?
     
     /**
      Method to clear all session in this module.
@@ -26,6 +27,7 @@ class MeetingModule {
         self.onEndMeeting = nil
         self.onMeetingBeignRecorded = nil
         self.onMeetingStopRecording = nil
+        self.onJoinRoomByAgent = nil
     }
     
     /**
@@ -82,9 +84,11 @@ class MeetingModule {
                     completion?(true)
                 }
                 
-                self?.onEndMeeting = {[weak self] in
-                    vm.stopMeeting {[weak self] in
-                        vc.dismiss(animated: true) {[weak self] in
+                self?.onEndMeeting = {
+                    vm.stopMeeting()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        vc.dismiss(animated: true) { [weak self] in
                             self?.clear()
                         }
                     }
@@ -96,6 +100,10 @@ class MeetingModule {
                 
                 self?.onMeetingStopRecording = {
                     vm.meetingStopRecording()
+                }
+                
+                self?.onJoinRoomByAgent = { isSuccess in
+                    vm.setJoinRoomByAgent(isSuccess)
                 }
             }
         }

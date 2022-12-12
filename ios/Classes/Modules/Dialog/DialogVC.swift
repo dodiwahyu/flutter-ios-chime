@@ -70,22 +70,28 @@ class DialogVC: UIViewController {
     }
     
     @IBAction func didTapYes(_ sender: UIButton) {
-        self.dismiss(animated: true) {[weak self] in
-            self?.onYes?()
-        }
+        self.onYes?()
+        self.dismiss(animated: true)
     }
     
     @IBAction func didTapNo(_ sender: UIButton) {
-        self.dismiss(animated: true) {[weak self] in
-            self?.onNo?()
-        }
+        self.onNo?()
+        self.dismiss(animated: true)
     }
 }
 
 extension DialogVC {
-    static func show(from viewController: UIViewController, title: String, message: String, onYes: (() -> Void)?, onNo: (() -> Void)?) {
+    static func show(
+        from viewController: UIViewController,
+        title: String,
+        message: String,
+        onYes: (() -> Void)? = nil,
+        onNo: (() -> Void)? = nil
+    ) {
         let dialog = DialogVC(title: "Confirmation", message: "Are you sure want to end the call?")
-        
+        dialog.onYes = onYes
+        dialog.onNo = onNo
+        dialog.modalPresentationStyle = .fullScreen
         viewController.present(dialog, animated: true)
         
     }

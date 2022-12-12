@@ -20,7 +20,7 @@
                 <outlet property="endButton" destination="mER-Ju-tb1" id="UEV-1u-LeN"/>
                 <outlet property="indicatorView" destination="OEa-ER-9zG" id="70h-3b-joz"/>
                 <outlet property="maskDescLabel" destination="TaJ-lt-NW9" id="vWb-Fb-XcQ"/>
-                <outlet property="maskPrimaryScreenView" destination="PGX-aD-7VI" id="b9w-rh-eoX"/>
+                <outlet property="maskSecondaryScreenView" destination="PGX-aD-7VI" id="b9w-rh-eoX"/>
                 <outlet property="micButton" destination="6eg-Xf-l0v" id="9c6-6A-snd"/>
                 <outlet property="prymaryScreenView" destination="RJ3-CD-WXt" id="mTt-Lb-fcN"/>
                 <outlet property="recordTimeLabel" destination="vZ3-s7-WPI" id="v46-ts-zwF"/>
@@ -139,14 +139,13 @@
                             <subviews>
                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="CYQ-xN-w3q">
                                     <rect key="frame" x="16" y="12" width="358" height="225.33333333333334"/>
-                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                    <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda. Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                     <color key="textColor" systemColor="labelColor"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                 </textView>
                             </subviews>
-                            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstItem="CYQ-xN-w3q" firstAttribute="leading" secondItem="e5i-FZ-w8D" secondAttribute="leading" constant="16" id="2sb-fD-V0I"/>
                                 <constraint firstAttribute="trailing" secondItem="CYQ-xN-w3q" secondAttribute="trailing" constant="16" id="I01-QE-zSJ"/>

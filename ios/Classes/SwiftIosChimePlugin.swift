@@ -4,12 +4,15 @@ import AmazonChimeSDK
 import SVProgressHUD
 
 enum FLUTTER_METHOD: String {
+    case requestCameraUsage
+    case requestRecordPermission
     case hideLoading
     case showToast
     case joinMeeting
     case endMeeting
     case meetingBeingRecorded
     case meetingStopRecording
+    case setJoinRoomByAgent
     case test
 }
 
@@ -50,9 +53,14 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             logger.error(msg: "\(call.method) not registered!")
             return
         }
+        
         logger.info(msg: "invokking \(method)")
         
         switch method {
+        case .requestCameraUsage:
+            handleRequestCameraUsage(result: result)
+        case .requestRecordPermission:
+            handleRequestRecordPermission(result: result)
         case .hideLoading:
             SVProgressHUD.dismiss()
         case .showToast:
@@ -65,6 +73,8 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             handleMeetingBeingRecorded(args: call.arguments, result: result)
         case .meetingStopRecording:
             handleMeetingStopRecording(args: call.arguments, result: result)
+        case .setJoinRoomByAgent:
+            handleJoinMeeting(args: call.arguments, result: result)
         case .test:
             handleTest()
             break
@@ -78,24 +88,49 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             return
         }
         
-        guard let sessionEntity = json.toObject(MeetingSessionEntity.self) else {
+        guard let meetingSessionJSON = json.toObject(VideoConferenceJSON.self) else {
             logger.error(msg: "invalid object")
             return
         }
         
+        let sessionEntity = meetingSessionJSON.convertToEntity()
+        logger.info(msg: String(describing: sessionEntity))
+        
         MeetingModule.shared.prepareMeeting(sessionEntity: sessionEntity)
+        result(nil)
     }
     
     private func handleEndMeeting(result: @escaping FlutterResult) {
         MeetingModule.shared.onEndMeeting?()
+        result(nil)
     }
     
     private func handleMeetingBeingRecorded(args: Any?, result: @escaping FlutterResult) {
         MeetingModule.shared.onMeetingBeignRecorded?()
+        result(nil)
     }
     
     private func handleMeetingStopRecording(args: Any?, result: @escaping FlutterResult) {
         MeetingModule.shared.onMeetingStopRecording?()
+        result(nil)
+    }
+    
+    private func handleMeetingJoinRoomByAgent(args: Any?, result: @escaping FlutterResult) {
+        let isSuccess = args as? Bool ?? false
+        MeetingModule.shared.onJoinRoomByAgent?(isSuccess)
+        result(nil)
+    }
+    
+    private func handleRequestCameraUsage(result: @escaping FlutterResult) {
+        MeetingModule.shared.requestVideoPermission { isGranted in
+            result(isGranted)
+        }
+    }
+    
+    private func handleRequestRecordPermission(result: @escaping FlutterResult) {
+        MeetingModule.shared.requestRecordPermission { isGranted in
+            result(isGranted)
+        }
     }
     
     private func handleTest() {

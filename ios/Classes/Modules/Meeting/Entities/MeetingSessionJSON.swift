@@ -26,7 +26,7 @@ struct VideoConferenceJSON: Codable {
         case clientJoin
     }
     
-    func convert(isAgent: Bool = false) -> MeetingSessionEntity {
+    func convertToEntity(isAgent: Bool = true) -> MeetingSessionEntity {
         let meetingEntity = MeetingEntity(
             meetingId: uuid,
             externalMeetingId: spajNo,
@@ -35,7 +35,7 @@ struct VideoConferenceJSON: Codable {
         )
         
         let attendee = isAgent ? attendee1 : attendee2
-        let attendeEntity = AttendeeEntity(externalUserId: attendee?.externalUserID ?? "", attendeeId: attendee?.attendeeID ?? "", joinToken: attendee?.joinToken ?? "")
+        let attendeEntity = AttendeeEntity(externalUserId: attendee?.externalUserId ?? "", attendeeId: attendee?.attendeeId ?? "", joinToken: attendee?.joinToken ?? "")
         
         return MeetingSessionEntity(
             uuid: uuid,
@@ -49,24 +49,31 @@ struct VideoConferenceJSON: Codable {
 
 // MARK: - Attendee
 struct AttendeeJSON: Codable {
-    let externalUserID, attendeeID, joinToken: String
+    let externalUserId, attendeeId, joinToken: String
     
     enum CodingKeys: String, CodingKey {
-        case externalUserID = "externalUserId"
-        case attendeeID = "attendeeId"
+        case externalUserId
+        case attendeeId
         case joinToken
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.externalUserId = try container.decode(String.self, forKey: .externalUserId)
+        self.attendeeId = try container.decode(String.self, forKey: .attendeeId)
+        self.joinToken = try container.decode(String.self, forKey: .joinToken)
     }
 }
 
 // MARK: - MeetingJSON
 struct MeetingJSON: Codable {
-    let meetingID, externalMeetingID: String
+    let meetingId, externalMeetingId: String
     let mediaPlacement: MediaPlacementJSON
     let mediaRegion: String
     
     enum CodingKeys: String, CodingKey {
-        case meetingID = "meetingId"
-        case externalMeetingID = "externalMeetingId"
+        case meetingId
+        case externalMeetingId
         case mediaPlacement, mediaRegion
     }
 }
@@ -86,6 +93,18 @@ struct MediaPlacementJSON: Codable {
         case signalingURL = "signalingUrl"
         case turnControlURL = "turnControlUrl"
         case eventIngestionURL = "eventIngestionUrl"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.audioHostURL = try container.decode(String.self, forKey: .audioHostURL)
+        self.audioFallbackURL = try container.decode(String.self, forKey: .audioFallbackURL)
+        self.screenDataURL = try container.decode(String.self, forKey: .screenDataURL)
+        self.screenSharingURL = try container.decode(String.self, forKey: .screenSharingURL)
+        self.screenViewingURL = try container.decode(String.self, forKey: .screenViewingURL)
+        self.signalingURL = try container.decode(String.self, forKey: .signalingURL)
+        self.turnControlURL = try container.decode(String.self, forKey: .turnControlURL)
+        self.eventIngestionURL = try container.decode(String.self, forKey: .eventIngestionURL)
     }
     
     func convert() -> MediaPlacementEntity {
