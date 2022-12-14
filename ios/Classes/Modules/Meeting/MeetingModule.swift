@@ -85,9 +85,7 @@ class MeetingModule {
                 }
                 
                 self?.onEndMeeting = {
-                    vm.stopMeeting()
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                    vm.stopMeeting {
                         vc.dismiss(animated: true) { [weak self] in
                             self?.clear()
                         }

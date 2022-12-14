@@ -60,10 +60,11 @@ class VideoConferenceViewController: UIViewController {
     }
     
     override func viewDidLoad() {
+        bindView()
+        
         super.viewDidLoad()
         initConnectivity()
         setupUI()
-        bindView()
         
         connectivity.startNotifier()
     }
@@ -199,12 +200,12 @@ class VideoConferenceViewController: UIViewController {
         viewModel.addObserver()
         viewModel.output = self
         
-        viewModel.onRecordingDidStarted = {[weak self] in
-            print("Record did started")
-        }
-        viewModel.onRecordingDidStopped = {[weak self] in
-            print("Record did stopped")
-        }
+//        viewModel.onRecordingDidStarted = {[weak self] in
+//            print("Record did started")
+//        }
+//        viewModel.onRecordingDidStopped = {[weak self] in
+//            print("Record did stopped")
+//        }
         
         viewModel.onTimeDidTick = {[weak self] (args) in
             self?.showRecordingTime(args)

@@ -9,6 +9,7 @@ import Foundation
 import AmazonChimeSDK
 import AmazonChimeSDKMedia
 import SVProgressHUD
+import AVFAudio
 
 let MAX_RECORD_TIME: Double = 2
 let WARNING_RECORD_TIME: Double = 1
@@ -145,12 +146,22 @@ class VideoConferenceVM {
     
     func startMeeting(completion: ((Bool) -> Void)? = nil) {
         do {
-            MeetingModule.shared.configureAudioSession()
-            try meetingSession.audioVideo.start(audioVideoConfiguration: audioVideoConfig)
-            meetingSession.audioVideo.startRemoteVideo()
+            let audioSession = AVAudioSession.sharedInstance()
+            if audioSession.category != .playAndRecord {
+                try audioSession.setCategory(AVAudioSession.Category.playAndRecord,options: AVAudioSession.CategoryOptions.allowBluetooth)
+                try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
+            }
+            
+            if audioSession.mode != .voiceChat {
+                try audioSession.setMode(.voiceChat)
+            }
+            
+            self.audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K, callKitEnabled: true)
+            try self.meetingSession.audioVideo.start(audioVideoConfiguration: self.audioVideoConfig)
+            self.meetingSession.audioVideo.startRemoteVideo()
             completion?(true)
         } catch {
-            logger.error(msg: error.localizedDescription)
+            logger.error(msg: "Error configuring AVAudioSession: \(error.localizedDescription)")
             completion?(false)
         }
     }
