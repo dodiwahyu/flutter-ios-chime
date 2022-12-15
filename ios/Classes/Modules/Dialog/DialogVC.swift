@@ -37,8 +37,13 @@ class DialogVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.1)
+        view.backgroundColor = UIColor.yellow.withAlphaComponent(0.1)
         setupUI()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.1)
     }
     
     private func setupUI() {

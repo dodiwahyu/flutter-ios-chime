@@ -143,7 +143,11 @@ class VideoConferenceViewController: UIViewController {
         prymaryScreenView.backgroundColor = .white
         secondaryScreenView.backgroundColor = .clear
         statusAlertView.backgroundColor = AppColors.primary
+        
+        scriptContentView.clipsToBounds = true
+        scriptContentView.layer.cornerRadius = 12
         scriptContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
         maskSecondaryScreenView.backgroundColor = AppColors.grey
         maskSecondaryScreenView.isHidden = false
         maskImageView.image = .fromCurrentBundle(with: "image_profile")
@@ -165,7 +169,6 @@ class VideoConferenceViewController: UIViewController {
         backButton.titleLabel?.textColor = AppColors.primary
         textView.font = AppFonts.font(size: 12.0, weight: .medium)
         textView.textColor = AppColors.textColor
-        textView.text = viewModel.wordingText
         textView.backgroundColor = .white
         
         recordTimeLabel.textColor = .black
@@ -174,6 +177,19 @@ class VideoConferenceViewController: UIViewController {
         connectivityView.backgroundColor = AppColors.red
         
         resetState()
+        setupScript()
+    }
+    
+    private func setupScript() {
+        let attibuted = NSMutableAttributedString()
+        
+        let title = "CONFERENCE.SCRIPT_AGENT_TITLE".localized()
+        attibuted.append(NSAttributedString(string: title + "\n\n", attributes: [.font: AppFonts.font(size: 15.0, weight: .bold)]))
+        
+        let content = viewModel.wordingText ?? "CONFERENCE.SCRIPT_EMPTY".localized()
+        attibuted.append(NSAttributedString(string: content, attributes: [.font: AppFonts.font(size: 13.0, weight: .regular)]))
+        
+        textView.attributedText = attibuted
     }
     
     private func showStatusAlert(with message: String) {
@@ -201,7 +217,6 @@ class VideoConferenceViewController: UIViewController {
         }
     }
     
-    
     private func bindView() {
         viewModel.addObserver()
         viewModel.output = self
@@ -209,7 +224,7 @@ class VideoConferenceViewController: UIViewController {
             self?.showRecordingTime(args)
         }
         viewModel.onTimeAlert = {[weak self] (args) in
-            self?.showStatusAlert(with: "Waktu recording tersisa \(args)")
+            self?.showStatusAlert(with: "CONFERENCE.MESSAGE_MEETING_WARNING".localizedWithFormat(args))
         }
         
         viewModel.onTimesup = {[weak self] in
@@ -266,6 +281,13 @@ class VideoConferenceViewController: UIViewController {
 
 
 extension VideoConferenceViewController: VideoConferenceVMOutput {
+    func vmDidUnBindLocalScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
+    }
+    
+    func vmDidUnBindContentScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
+        maskSecondaryScreenView.isHidden = false
+    }
+    
     func vmDidBindLocalScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
         session.audioVideo.bindVideoView(videoView: prymaryScreenView, tileId: tileId)
     }

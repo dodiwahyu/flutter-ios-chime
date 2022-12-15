@@ -62,6 +62,7 @@ class SettingViewController: BottomPopupViewController {
         for device in devices {
             let option = UIAlertAction(title: device.label, style: .default) {[weak self] (_) in
                 self?.meetingSession.audioVideo.chooseAudioDevice(mediaDevice: device)
+                self?.speakerLabel.text = device.label
             }
             alert.addAction(option)
         }

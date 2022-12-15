@@ -5,3 +5,14 @@
   Created by TMLIJKTMAC08 on 05/12/22.
   
 */
+
+BUTTON.YES = "Ya";
+BUTTON.NO = "Tidak";
+
+CONFIRM = "Konfirmasi";
+CONFIRM.END_MEETING = "Apakah Anda yakin mau mengakhiri percakapan?";
+
+CONFERENCE.SCRIPT_EMPTY = "Tidak ada skrip";
+CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
+CONFERENCE.MESSAGE_MEETING_WARNING = "Sisa waktu sebelum video berakhir otomatis adalah %@ menit lagi.";
+

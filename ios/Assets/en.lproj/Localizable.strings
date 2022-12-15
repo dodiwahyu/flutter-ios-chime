@@ -5,3 +5,13 @@
   Created by TMLIJKTMAC08 on 05/12/22.
   
 */
+
+BUTTON.YES = "Ya";
+BUTTON.NO = "Tidak";
+
+CONFIRM = "Confirmation";
+CONFIRM.END_MEETING = "Are you sure want to end the call?";
+
+CONFERENCE.SCRIPT_EMPTY = "There is no script";
+CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
+CONFERENCE.MESSAGE_MEETING_WARNING = "This video will end automatically in %@ minutes";
