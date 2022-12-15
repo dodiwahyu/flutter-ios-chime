@@ -11,8 +11,8 @@ import AmazonChimeSDKMedia
 import SVProgressHUD
 import AVFAudio
 
-let MAX_RECORD_TIME: Double = 2
-let WARNING_RECORD_TIME: Double = 1
+let MAX_RECORD_TIME: Double = 10
+let WARNING_RECORD_TIME: Double = 5
 
 protocol VideoConferenceVMOutput: AnyObject {
     func vmDidBindLocalScreen(for session: DefaultMeetingSession, tileId: Int)
@@ -27,6 +27,7 @@ class VideoConferenceVM {
     var spajNumber: String!
     var currentAttendee: AttendeeEntity!
     var isAsAgent: Bool = false
+    var wordingText: String?
     
     var audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K)
     var meetingSessionConfig: MeetingSessionConfiguration!
@@ -110,11 +111,13 @@ class VideoConferenceVM {
          attendee: AttendeeEntity,
          createMeetingResponse: AmazonChimeSDK.CreateMeetingResponse,
          createAttendeeResponse: AmazonChimeSDK.CreateAttendeeResponse,
+         wordingText: String?,
          isAsAgent: Bool
     ) {
         self.meetingUUID = uuid
         self.spajNumber = spajNumber
         self.currentAttendee = attendee
+        self.wordingText = wordingText
         self.isAsAgent = isAsAgent
         self.meetingSessionConfig = MeetingSessionConfiguration(
             createMeetingResponse: createMeetingResponse,
@@ -158,6 +161,7 @@ class VideoConferenceVM {
             
             self.audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K, callKitEnabled: true)
             try self.meetingSession.audioVideo.start(audioVideoConfiguration: self.audioVideoConfig)
+            try self.meetingSession.audioVideo.startLocalVideo()
             self.meetingSession.audioVideo.startRemoteVideo()
             completion?(true)
         } catch {
@@ -510,5 +514,22 @@ extension VideoConferenceVM: EventAnalyticsObserver {
         print("\n")
         print("event-name => \(name) attributes: \(attributes)")
         print("\n")
+        
+//        if name == .meetingFailed,
+//            let status = attributes["meetingErrorMessage"] as? String {
+//
+//            if status == "audioAuthenticationRejected" {
+//                // Call request audio
+//                if let device = self.currentAudioDevice {
+//                    self.meetingSession.audioVideo.chooseAudioDevice(mediaDevice: device)
+//                }
+//
+//                do {
+//                    try self.meetingSession.audioVideo.start(audioVideoConfiguration: self.audioVideoConfig)
+//                } catch {
+//                    print("Error => \(error.localizedDescription)")
+//                }
+//            }
+//        }
     }
 }

@@ -88,12 +88,11 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             return
         }
         
-        guard let meetingSessionJSON = json.toObject(VideoConferenceJSON.self) else {
+        guard let sessionEntity = json.toObject(MeetingSessionEntity.self) else {
             logger.error(msg: "invalid object")
             return
         }
         
-        let sessionEntity = meetingSessionJSON.convertToEntity()
         logger.info(msg: String(describing: sessionEntity))
         
         MeetingModule.shared.prepareMeeting(sessionEntity: sessionEntity)
@@ -150,7 +149,7 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
         let meeting = CreateMeetingResponse(meeting: Meeting(externalMeetingId: "", mediaPlacement: MediaPlacement(audioFallbackUrl: "", audioHostUrl: "", signalingUrl: "", turnControlUrl: ""), mediaRegion: "", meetingId: ""))
         let attendeRes = CreateAttendeeResponse(attendee: Attendee(attendeeId: "", externalUserId: "", joinToken: ""))
 
-        let viewModel = VideoConferenceVM(uuid: UUID().uuidString, spajNumber: "", attendee: attendee, createMeetingResponse: meeting, createAttendeeResponse: attendeRes, isAsAgent: true)
+        let viewModel = VideoConferenceVM(uuid: UUID().uuidString, spajNumber: "", attendee: attendee, createMeetingResponse: meeting, createAttendeeResponse: attendeRes, wordingText: "", isAsAgent: true)
         let vc = VideoConferenceViewController()
         vc.viewModel = viewModel
         vc.modalPresentationStyle = .fullScreen

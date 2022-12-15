@@ -60,11 +60,10 @@ class VideoConferenceViewController: UIViewController {
     }
     
     override func viewDidLoad() {
-        bindView()
-        
         super.viewDidLoad()
         initConnectivity()
         setupUI()
+        bindView()
         
         connectivity.startNotifier()
     }
@@ -161,6 +160,8 @@ class VideoConferenceViewController: UIViewController {
         backButton.titleLabel?.textColor = AppColors.primary
         textView.font = AppFonts.font(size: 12.0, weight: .medium)
         textView.textColor = AppColors.textColor
+        textView.text = viewModel.wordingText
+        textView.backgroundColor = .white
         
         recordTimeLabel.textColor = .black
         contentRecordingView.backgroundColor = UIColor.white.withAlphaComponent(0.4)
@@ -199,14 +200,6 @@ class VideoConferenceViewController: UIViewController {
     private func bindView() {
         viewModel.addObserver()
         viewModel.output = self
-        
-//        viewModel.onRecordingDidStarted = {[weak self] in
-//            print("Record did started")
-//        }
-//        viewModel.onRecordingDidStopped = {[weak self] in
-//            print("Record did stopped")
-//        }
-        
         viewModel.onTimeDidTick = {[weak self] (args) in
             self?.showRecordingTime(args)
         }
@@ -217,6 +210,7 @@ class VideoConferenceViewController: UIViewController {
         viewModel.onTimesup = {[weak self] in
             self?.dismiss(animated: true)
         }
+        
     }
     
     func startVideoSessions() {
@@ -226,8 +220,6 @@ class VideoConferenceViewController: UIViewController {
         
         viewModel.startMeeting {[weak self] isSuccess in
             self?.isSessionStarted = isSuccess
-            guard isSuccess, let self else { return }
-            self.viewModel.startLocalVideo()
         }
     }
     

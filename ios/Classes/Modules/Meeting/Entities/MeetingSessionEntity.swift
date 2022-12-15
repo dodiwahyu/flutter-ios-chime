@@ -13,7 +13,39 @@ struct MeetingSessionEntity: Codable {
     let spajNumber: String?
     let meeting: MeetingEntity?
     let attendee: AttendeeEntity?
+    let recordUrl: String?
+    let recordDate: String?
+    let wordingText: String?
+    let agentJoin: Bool?
+    let clientJoin: Bool?
     let asAgent: Bool?
+    
+    enum CodingKeys: String, CodingKey {
+        case uuid
+        case spajNumber
+        case meeting
+        case attendee
+        case recordUrl
+        case recordDate
+        case wordingText
+        case agentJoin
+        case clientJoin
+        case asAgent
+    }
+    
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        uuid = values[.uuid]
+        spajNumber = values[.spajNumber]
+        meeting = values[.meeting]
+        attendee = values[.attendee]
+        recordUrl = values[.recordUrl]
+        recordDate = values[.recordDate]
+        wordingText = values[.wordingText]
+        agentJoin = values[.agentJoin]
+        clientJoin = values[.clientJoin]
+        asAgent = values[.asAgent]
+    }
     
     func getMeetingResponse() -> CreateMeetingResponse? {
         guard let mediaPlacement = meeting?.mediaPlacement?.mediaPlacement,
@@ -39,3 +71,4 @@ struct MeetingSessionEntity: Codable {
         return CreateAttendeeResponse(attendee: entity)
     }
 }
+

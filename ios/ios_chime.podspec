@@ -24,6 +24,7 @@ Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
   # Core dependencies are required
   s.dependency 'Flutter'
   s.dependency 'AmazonChimeSDK-Bitcode'
+  s.dependency 'AmazonChimeSDKMachineLearning-Bitcode'
   s.dependency 'Toast-Swift', '~> 5.0.1'
   s.dependency 'SVProgressHUD'
   s.dependency 'Connectivity'
