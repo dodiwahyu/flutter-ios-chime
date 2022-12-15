@@ -20,6 +20,7 @@
                 <outlet property="endButton" destination="mER-Ju-tb1" id="UEV-1u-LeN"/>
                 <outlet property="indicatorView" destination="OEa-ER-9zG" id="70h-3b-joz"/>
                 <outlet property="maskDescLabel" destination="TaJ-lt-NW9" id="vWb-Fb-XcQ"/>
+                <outlet property="maskImageView" destination="MZS-3m-rBv" id="o4J-Wa-N5s"/>
                 <outlet property="maskSecondaryScreenView" destination="PGX-aD-7VI" id="b9w-rh-eoX"/>
                 <outlet property="micButton" destination="6eg-Xf-l0v" id="9c6-6A-snd"/>
                 <outlet property="prymaryScreenView" destination="RJ3-CD-WXt" id="mTt-Lb-fcN"/>
@@ -64,8 +65,11 @@
                                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="dLl-b0-Px8">
                                             <rect key="frame" x="8" y="32.999999999999993" width="114" height="104.33333333333331"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="image_profile" translatesAutoresizingMaskIntoConstraints="NO" id="MZS-3m-rBv">
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="MZS-3m-rBv">
                                                     <rect key="frame" x="0.0" y="0.0" width="114" height="84"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="84" id="NuJ-RQ-gSl"/>
+                                                    </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Waiting Other User" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="TaJ-lt-NW9">
                                                     <rect key="frame" x="0.0" y="83.999999999999943" width="114" height="20.333333333333329"/>
@@ -94,7 +98,7 @@
                                                 <constraint firstAttribute="width" constant="45" id="jeF-Tv-4Xd"/>
                                             </constraints>
                                             <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="icon_mic_unmute" title=""/>
+                                            <buttonConfiguration key="configuration" style="plain" title=""/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                     <integer key="value" value="6"/>
@@ -112,7 +116,7 @@
                                                 <constraint firstAttribute="width" constant="45" id="evx-bW-zfJ"/>
                                             </constraints>
                                             <state key="normal" title="Button"/>
-                                            <buttonConfiguration key="configuration" style="plain" image="icon_file" title=""/>
+                                            <buttonConfiguration key="configuration" style="plain" title=""/>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                                     <integer key="value" value="6"/>
@@ -225,7 +229,7 @@
                                         <constraint firstAttribute="width" secondItem="mER-Ju-tb1" secondAttribute="height" id="gZV-S4-gm2"/>
                                     </constraints>
                                     <state key="normal" title="Button"/>
-                                    <buttonConfiguration key="configuration" style="plain" image="icon_phone"/>
+                                    <buttonConfiguration key="configuration" style="plain"/>
                                     <userDefinedRuntimeAttributes>
                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
                                             <real key="value" value="22.5"/>
@@ -329,11 +333,7 @@
         </view>
     </objects>
     <resources>
-        <image name="icon_file" width="35" height="35"/>
-        <image name="icon_mic_unmute" width="35" height="35"/>
         <image name="icon_more" width="24" height="24"/>
-        <image name="icon_phone" width="29" height="12"/>
-        <image name="image_profile" width="84" height="84"/>
         <namedColor name="app_color_main">
             <color red="0.090000003576278687" green="0.71799999475479126" blue="0.7369999885559082" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>

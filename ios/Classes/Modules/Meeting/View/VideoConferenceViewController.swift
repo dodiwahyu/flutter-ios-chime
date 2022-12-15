@@ -40,6 +40,7 @@ class VideoConferenceViewController: UIViewController {
     
     @IBOutlet weak var maskSecondaryScreenView: UIView!
     @IBOutlet weak var maskDescLabel: UILabel!
+    @IBOutlet weak var maskImageView: UIImageView!
     
     @IBOutlet weak var bottomConstraintSecondVideoView: NSLayoutConstraint!
     
@@ -101,8 +102,7 @@ class VideoConferenceViewController: UIViewController {
     @IBAction func didTapMicBUtton(_ sender: UIButton) {
         self.viewModel.isMute = !self.viewModel.isMute
         sender.backgroundColor = self.viewModel.isMute ? AppColors.grey : AppColors.primary
-        let icon = Bundle.image(classType: Self.self, name: self.viewModel.isMute ? "icon_mic_mute" : "icon_mic_unmute")
-        sender.setImage(icon, for: .normal)
+        sender.setImage(.fromCurrentBundle(with: self.viewModel.isMute ? "icon_mic_mute" : "icon_mic_unmute"), for: .normal)
     }
     
     @IBAction func didTapToggleScript(_ sender: UIButton) {
@@ -146,11 +146,16 @@ class VideoConferenceViewController: UIViewController {
         scriptContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         maskSecondaryScreenView.backgroundColor = AppColors.grey
         maskSecondaryScreenView.isHidden = false
+        maskImageView.image = .fromCurrentBundle(with: "image_profile")
         
         settingButton.setTitle("", for: .normal)
+        settingButton.setImage(.fromCurrentBundle(with: "icon_more"), for: .normal)
         endButton.setTitle("", for: .normal)
+        endButton.setImage(.fromCurrentBundle(with: "icon_phone"), for: .normal)
         micButton.setTitle("", for: .normal)
+        micButton.setImage(.fromCurrentBundle(with: "icon_mic_unmute"), for: .normal)
         scriptButton.setTitle("", for: .normal)
+        scriptButton.setImage(.fromCurrentBundle(with: "icon_file"), for: .normal)
         backButton.titleLabel?.font = AppFonts.font(size: 12, weight: .semibold)
         backButton.setTitleColor(AppColors.primary, for: .normal)
         
