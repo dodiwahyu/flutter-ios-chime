@@ -37,13 +37,12 @@ class DialogVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor.yellow.withAlphaComponent(0.1)
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.1)
         setupUI()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.1)
     }
     
     private func setupUI() {
@@ -96,7 +95,7 @@ extension DialogVC {
         let dialog = DialogVC(title: "Confirmation", message: "Are you sure want to end the call?")
         dialog.onYes = onYes
         dialog.onNo = onNo
-        dialog.modalPresentationStyle = .fullScreen
+        dialog.modalPresentationStyle = .overFullScreen
         viewController.present(dialog, animated: true)
         
     }
