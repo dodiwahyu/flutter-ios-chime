@@ -8,6 +8,9 @@
 
 BUTTON.YES = "Ya";
 BUTTON.NO = "Tidak";
+BUTTON.CANCEL = "Batal";
+BUTTON.OK = "Ok";
+BUTTON.RETRY = "Coba Lagi";
 
 CONFIRM = "Konfirmasi";
 CONFIRM.END_MEETING = "Apakah Anda yakin mau mengakhiri percakapan?";
@@ -15,4 +18,5 @@ CONFIRM.END_MEETING = "Apakah Anda yakin mau mengakhiri percakapan?";
 CONFERENCE.SCRIPT_EMPTY = "Tidak ada skrip";
 CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
 CONFERENCE.MESSAGE_MEETING_WARNING = "Sisa waktu sebelum video berakhir otomatis adalah %@ menit lagi.";
-
+CONFERENCE.MESSAGE_CONFIRM_END = "Apakah anda yakin ingin mengakhiri video conference?";
+CONFERENCE.MESSAGE_SESSION_END = "Maaf sesi video call sudah berakhir";

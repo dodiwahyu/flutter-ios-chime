@@ -6,8 +6,11 @@
   
 */
 
-BUTTON.YES = "Ya";
-BUTTON.NO = "Tidak";
+BUTTON.YES = "Yes";
+BUTTON.NO = "No";
+BUTTON.CANCEL = "Cancel";
+BUTTON.OK = "Ok";
+BUTTON.RETRY = "Retry";
 
 CONFIRM = "Confirmation";
 CONFIRM.END_MEETING = "Are you sure want to end the call?";
@@ -15,3 +18,5 @@ CONFIRM.END_MEETING = "Are you sure want to end the call?";
 CONFERENCE.SCRIPT_EMPTY = "There is no script";
 CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
 CONFERENCE.MESSAGE_MEETING_WARNING = "This video will end automatically in %@ minutes";
+CONFERENCE.MESSAGE_CONFIRM_END = "Are you sure you want to end the video conference?";
+CONFERENCE.MESSAGE_SESSION_END = "Sorry the video call session has ended";

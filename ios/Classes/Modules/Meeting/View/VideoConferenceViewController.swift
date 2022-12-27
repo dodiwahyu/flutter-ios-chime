@@ -43,6 +43,7 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var maskImageView: UIImageView!
     
     @IBOutlet weak var bottomConstraintSecondVideoView: NSLayoutConstraint!
+    var secondaryScreenHeight: NSLayoutConstraint?
     
     private var connectivity = Connectivity()
     private var isSessionStarted = false
@@ -90,8 +91,8 @@ class VideoConferenceViewController: UIViewController {
     @IBAction func didTapEndButton(_ sender: UIButton) {
         DialogVC.show(
             from: self,
-            title: "Warning",
-            message: "Akah anda yakin ingin mengakhiri video conference",
+            type: .Confirmation,
+            message: "CONFERENCE.MESSAGE_CONFIRM_END".localized(),
             onYes: {[weak self] in
                 self?.viewModel.requestEndMeeting()
             },
@@ -112,8 +113,8 @@ class VideoConferenceViewController: UIViewController {
     @IBAction func didTapBackButton(_ sender: Any) {
         DialogVC.show(
             from: self,
-            title: "Warning",
-            message: "Akah anda yakin ingin mengakhiri video conference",
+            type: .Confirmation,
+            message: "CONFERENCE.MESSAGE_CONFIRM_END".localized(),
             onYes: {[weak self] in
                 self?.viewModel.requestEndMeeting()
             }, onNo: nil)
@@ -178,6 +179,7 @@ class VideoConferenceViewController: UIViewController {
         
         resetState()
         setupScript()
+        setRatioSecondaryScreen(130/170)
     }
     
     private func setupScript() {
@@ -276,6 +278,27 @@ class VideoConferenceViewController: UIViewController {
             connectivityView.backgroundColor = AppColors.orange
         }
     }
+    
+    private func setRatioSecondaryScreen(_ multiplier: CGFloat) {
+        if let current = secondaryScreenHeight {
+            NSLayoutConstraint.deactivate([current])
+            secondaryScreenView.removeConstraint(current)
+        }
+        
+        secondaryScreenHeight = NSLayoutConstraint(
+            item: secondaryScreenView!,
+            attribute: .width,
+            relatedBy: .equal,
+            toItem: secondaryScreenView!,
+            attribute: .height,
+            multiplier: multiplier,
+            constant: 0)
+        
+        secondaryScreenView.addConstraint(secondaryScreenHeight!)
+        NSLayoutConstraint.activate([secondaryScreenHeight!])
+        
+        view.layoutIfNeeded()
+    }
 }
 
 
@@ -295,5 +318,15 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
     func vmDidBindContentScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
         maskSecondaryScreenView.isHidden = true
         session.audioVideo.bindVideoView(videoView: secondaryScreenView, tileId: tileId)
+    }
+    
+    func vmSessionDidEnd() {
+        DialogVC.show(from: self, type: .Info, message: "CONFERENCE.MESSAGE_SESSION_END".localized(), onYes:  { [weak self] in
+            self?.dismiss(animated: true)
+        })
+    }
+    
+    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileId: Int, size: CGSize) {
+        setRatioSecondaryScreen(size.width/size.height)
     }
 }

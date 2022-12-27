@@ -7,6 +7,35 @@
 
 import UIKit
 
+enum DialogType {
+    case Confirmation
+    case Info
+    case Failure
+    case Success
+    
+    var title: String {
+        switch self {
+        case .Confirmation:
+            return "CONFIRM".localized()
+        case .Info:
+            return "Info"
+        case .Failure:
+            return "Failure"
+        case .Success:
+            return "Success"
+        }
+    }
+    
+    var icon: UIImage? {
+        switch self {
+        case .Confirmation: return .fromCurrentBundle(with: "shape_confirm")
+        case .Info: return .fromCurrentBundle(with: "shape_information")
+        case .Failure: return .fromCurrentBundle(with: "shape_warning")
+        case .Success: return .fromCurrentBundle(with: "shape_success")
+        }
+    }
+}
+
 class DialogVC: UIViewController {
     
     @IBOutlet weak var contentView: UIView!
@@ -17,16 +46,20 @@ class DialogVC: UIViewController {
     @IBOutlet weak var buttonYes: UIButton!
     @IBOutlet weak var buttonNo: UIButton!
     
+    private var type: DialogType = .Info
+    
     
     var onYes: (() -> Void)?
     var onNo: (() -> Void)?
     
-    private var _titleText: String
-    private var _messageText: String?
+    private var titleText: String
+    private var messageText: String?
     
-    init(title: String, message: String?) {
-        _titleText = title
-        _messageText = message
+    init(type: DialogType, title: String, message: String?) {
+        self.titleText = title
+        self.messageText = message
+        self.type = type
+        
         let bundle = Bundle.getBundle(for: DialogVC.self)
         super.init(nibName: "DialogVC", bundle: bundle)
     }
@@ -51,11 +84,11 @@ class DialogVC: UIViewController {
         
         titleLabel.font = AppFonts.font(size: 20, weight: .medium)
         titleLabel.textColor = AppColors.textColor
-        titleLabel.text = _titleText
+        titleLabel.text = titleText
         titleLabel.textAlignment = .center
         messageLabel.font = AppFonts.font(size: 15, weight: .regular)
         messageLabel.textColor = AppColors.textColor
-        messageLabel.text = _messageText
+        messageLabel.text = messageText
         messageLabel.textAlignment = .center
         
         buttonYes.titleLabel?.font = AppFonts.font(size: 15.0, weight: .semibold)
@@ -71,32 +104,63 @@ class DialogVC: UIViewController {
         buttonNo.layer.cornerRadius = 10.0
         buttonNo.layer.borderColor = AppColors.red.cgColor
         buttonNo.layer.borderWidth = 1.5
+        
+        imageView.image = self.type.icon
+        
+        switch self.type {
+        case .Info:
+            buttonNo.isHidden = true
+            buttonYes.isHidden = false
+            buttonYes.setTitle("BUTTON.OK".localized(), for: .normal)
+            
+        case .Confirmation:
+            buttonNo.isHidden = false
+            buttonYes.isHidden = false
+            
+            buttonNo.setTitle("BUTTON.NO".localized(), for: .normal)
+            buttonYes.setTitle("BUTTON.YES".localized(), for: .normal)
+            
+        case .Failure:
+            buttonNo.isHidden = true
+            buttonYes.isHidden = false
+            
+            buttonNo.setTitle("BUTTON.CANCEL".localized(), for: .normal)
+            buttonYes.setTitle("BUTTON.RETRY".localized(), for: .normal)
+            
+        case .Success:
+            buttonNo.isHidden = true
+            buttonYes.isHidden = false
+            
+            buttonYes.setTitle("BUTTON.OK".localized(), for: .normal)
+        }
     }
     
     @IBAction func didTapYes(_ sender: UIButton) {
-        self.onYes?()
-        self.dismiss(animated: true)
+        self.dismiss(animated: true) { [weak self] in
+            self?.onYes?()
+        }
     }
     
     @IBAction func didTapNo(_ sender: UIButton) {
-        self.onNo?()
-        self.dismiss(animated: true)
+        self.dismiss(animated: true) {[weak self] in
+            self?.onNo?()
+        }
     }
 }
 
 extension DialogVC {
     static func show(
         from viewController: UIViewController,
-        title: String,
+        type: DialogType,
+        title: String? = nil,
         message: String,
         onYes: (() -> Void)? = nil,
         onNo: (() -> Void)? = nil
     ) {
-        let dialog = DialogVC(title: "Confirmation", message: "Are you sure want to end the call?")
+        let dialog = DialogVC(type: type, title: title ?? type.title, message: message)
         dialog.onYes = onYes
         dialog.onNo = onNo
         dialog.modalPresentationStyle = .overFullScreen
         viewController.present(dialog, animated: true)
-        
     }
 }
