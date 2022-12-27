@@ -19,7 +19,7 @@ protocol VideoConferenceVMOutput: AnyObject {
     func vmDidBindContentScreen(for session: DefaultMeetingSession, tileId: Int)
     func vmDidUnBindLocalScreen(for session: DefaultMeetingSession, tileId: Int)
     func vmDidUnBindContentScreen(for session: DefaultMeetingSession, tileId: Int)
-    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileId: Int, size: CGSize)
+    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileState: AmazonChimeSDK.VideoTileState)
     func vmSessionDidEnd()
 }
 
@@ -368,8 +368,7 @@ extension VideoConferenceVM: VideoTileObserver {
             output?.vmDidBindContentScreen(for: meetingSession, tileId: tileState.tileId)
             
             // Need update secondary screen aspect ratio
-            let size = CGSize(width: CGFloat(tileState.videoStreamContentWidth), height: CGFloat(tileState.videoStreamContentHeight))
-            output?.vmVideoTileSizeDidChange(for: meetingSession, tileId: tileState.tileId, size: size)
+            output?.vmVideoTileSizeDidChange(for: meetingSession, tileState: tileState)
         }
         
         logger.info(msg: "ios_chime ==> videoTileDidAdd id \(tileState.tileId)")
@@ -400,12 +399,10 @@ extension VideoConferenceVM: VideoTileObserver {
     }
     
     func videoTileSizeDidChange(tileState: AmazonChimeSDK.VideoTileState) {
-        let size = CGSize(width: CGFloat(tileState.videoStreamContentWidth), height: CGFloat(tileState.videoStreamContentHeight))
-        
         if tileState.isLocalTile {
             // Do nothing
         } else {
-            output?.vmVideoTileSizeDidChange(for: meetingSession, tileId: tileState.tileId, size: size)
+            output?.vmVideoTileSizeDidChange(for: meetingSession, tileState: tileState)
         }
     }
     

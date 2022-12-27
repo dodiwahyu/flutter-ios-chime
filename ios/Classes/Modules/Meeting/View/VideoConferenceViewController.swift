@@ -326,7 +326,17 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
         })
     }
     
-    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileId: Int, size: CGSize) {
-        setRatioSecondaryScreen(size.width/size.height)
+    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileState: VideoTileState) {
+        
+        var multiplier: CGFloat = 130/170
+        
+        let height = tileState.videoStreamContentHeight
+        let width = tileState.videoStreamContentWidth
+        
+        if height > 0 && width > 0 {
+            multiplier = CGFloat(width) / CGFloat(height)
+        }
+        
+        setRatioSecondaryScreen(multiplier)
     }
 }
