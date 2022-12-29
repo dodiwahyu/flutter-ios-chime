@@ -267,10 +267,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Zr-di-W7U">
-                            <rect key="frame" x="6" y="48" width="72" height="35"/>
+                            <rect key="frame" x="5.9999999999999964" y="48" width="61.666666666666657" height="35"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="35" id="kO3-GR-Wa2"/>
-                                <constraint firstAttribute="width" constant="72" id="uZW-5P-Wnm"/>
                             </constraints>
                             <state key="normal" title="Button"/>
                             <buttonConfiguration key="configuration" style="plain" title="Back"/>

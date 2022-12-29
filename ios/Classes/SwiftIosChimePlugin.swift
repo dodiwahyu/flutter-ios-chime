@@ -4,6 +4,7 @@ import AmazonChimeSDK
 import SVProgressHUD
 
 enum FLUTTER_METHOD: String {
+    case setLang
     case requestCameraUsage
     case requestRecordPermission
     case hideLoading
@@ -57,6 +58,8 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
         logger.info(msg: "invokking \(method)")
         
         switch method {
+        case .setLang:
+            handleSetLang(args: call.arguments, result: result)
         case .requestCameraUsage:
             handleRequestCameraUsage(result: result)
         case .requestRecordPermission:
@@ -79,6 +82,15 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             handleTest()
             break
         }
+    }
+    
+    private func handleSetLang(args: Any?, result: @escaping FlutterResult) {
+        guard let langCode = args as? String else {
+            result(false)
+            return
+        }
+        UserDefaults.standard.set(langCode, forKey: "KEY_LANG_CODE")
+        result(true)
     }
     
     private func handleJoinMeeting(args: Any?, result: @escaping FlutterResult) {

@@ -152,6 +152,7 @@ class VideoConferenceViewController: UIViewController {
         maskSecondaryScreenView.backgroundColor = AppColors.grey
         maskSecondaryScreenView.isHidden = false
         maskImageView.image = .fromCurrentBundle(with: "image_profile")
+        maskDescLabel.text = "CONFERENCE.WAITING_TITLE".localized().capitalized
         
         settingButton.setTitle("", for: .normal)
         settingButton.setImage(.fromCurrentBundle(with: "icon_more"), for: .normal)
@@ -161,6 +162,7 @@ class VideoConferenceViewController: UIViewController {
         micButton.setImage(.fromCurrentBundle(with: "icon_mic_unmute"), for: .normal)
         scriptButton.setTitle("", for: .normal)
         scriptButton.setImage(.fromCurrentBundle(with: "icon_file"), for: .normal)
+        backButton.setTitle("BUTTON.BACK".localized(), for: .normal)
         backButton.titleLabel?.font = AppFonts.font(size: 12, weight: .semibold)
         backButton.setTitleColor(AppColors.primary, for: .normal)
         

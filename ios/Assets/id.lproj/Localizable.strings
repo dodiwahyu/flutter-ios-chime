@@ -11,10 +11,12 @@ BUTTON.NO = "Tidak";
 BUTTON.CANCEL = "Batal";
 BUTTON.OK = "Ok";
 BUTTON.RETRY = "Coba Lagi";
+BUTTON.BACK = "Kembali";
 
 CONFIRM = "Konfirmasi";
 CONFIRM.END_MEETING = "Apakah Anda yakin mau mengakhiri percakapan?";
 
+CONFERENCE.WAITING_TITLE = "Menunggu pengguna lain";
 CONFERENCE.SCRIPT_EMPTY = "Tidak ada skrip";
 CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
 CONFERENCE.MESSAGE_MEETING_WARNING = "Sisa waktu sebelum video berakhir otomatis adalah %@ menit lagi.";

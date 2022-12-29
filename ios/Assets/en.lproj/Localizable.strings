@@ -11,10 +11,12 @@ BUTTON.NO = "No";
 BUTTON.CANCEL = "Cancel";
 BUTTON.OK = "Ok";
 BUTTON.RETRY = "Retry";
+BUTTON.BACK = "Back";
 
 CONFIRM = "Confirmation";
 CONFIRM.END_MEETING = "Are you sure want to end the call?";
 
+CONFERENCE.WAITING_TITLE = "Waiting other user";
 CONFERENCE.SCRIPT_EMPTY = "There is no script";
 CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
 CONFERENCE.MESSAGE_MEETING_WARNING = "This video will end automatically in %@ minutes";

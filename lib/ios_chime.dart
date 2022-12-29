@@ -14,6 +14,10 @@ class IosChime {
     return IosChimePlatform.instance.getPlatformVersion();
   }
 
+  static Future<bool> setLangCode(String langCode) async {
+    return await IosChimePlatform.instance.setLangCode(langCode) ?? false;
+  }
+
   static Future<bool> requestCameraUsage() async {
     return await IosChimePlatform.instance.requestCameraUsage() ?? false;
   }
