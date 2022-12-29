@@ -20,7 +20,8 @@ protocol VideoConferenceVMOutput: AnyObject {
     func vmDidUnBindLocalScreen(for session: DefaultMeetingSession, tileId: Int)
     func vmDidUnBindContentScreen(for session: DefaultMeetingSession, tileId: Int)
     func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileState: AmazonChimeSDK.VideoTileState)
-    func vmSessionDidEnd()
+    func vmSessionDidEndByAgent()
+    func vmSessionDidEndByClient()
 }
 
 class VideoConferenceVM {
@@ -31,7 +32,8 @@ class VideoConferenceVM {
     var spajNumber: String!
     var currentAttendee: AttendeeEntity!
     var isAsAgent: Bool = false
-    var wordingText: String?
+    var wordingTextAgent: String?
+    var wordingTextClient: String?
     
     var audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K)
     var meetingSessionConfig: MeetingSessionConfiguration!
@@ -39,6 +41,7 @@ class VideoConferenceVM {
     var listAttendeeJoinded: [AttendeeInfo] = []
     var isRecording: Bool = false
     var isJoinned: Bool?
+    var isAgentRequestToEnd: Bool?
     
     let timeFormater = DateComponentsFormatter()
     let minuteFormatter = DateComponentsFormatter()
@@ -118,13 +121,15 @@ class VideoConferenceVM {
          attendee: AttendeeEntity,
          createMeetingResponse: AmazonChimeSDK.CreateMeetingResponse,
          createAttendeeResponse: AmazonChimeSDK.CreateAttendeeResponse,
-         wordingText: String?,
+         wordingTextAgent: String?,
+         wordingTextClient: String?,
          isAsAgent: Bool
     ) {
         self.meetingUUID = uuid
         self.spajNumber = spajNumber
         self.currentAttendee = attendee
-        self.wordingText = wordingText
+        self.wordingTextAgent = wordingTextAgent
+        self.wordingTextClient = wordingTextClient
         self.isAsAgent = isAsAgent
         self.meetingSessionConfig = MeetingSessionConfiguration(
             createMeetingResponse: createMeetingResponse,
@@ -136,7 +141,7 @@ class VideoConferenceVM {
         )
         
         timeFormater.unitsStyle = .positional
-        timeFormater.allowedUnits = [.hour, .minute, .second]
+        timeFormater.allowedUnits = [.minute, .second]
         timeFormater.zeroFormattingBehavior = .pad
         
         minuteFormatter.unitsStyle = .positional
@@ -270,9 +275,11 @@ extension VideoConferenceVM {
         let meetingId = meetingSessionConfig.meetingId
         do {
             let payload = try AppEventType.MeetingSessionRequestEnd.payload(args: ["MeetingID": meetingId])
+            isAgentRequestToEnd = true
             eventSink?(payload)
         } catch {
             logger.fault(msg: error.localizedDescription)
+            isAgentRequestToEnd = nil
         }
     }
     
@@ -448,7 +455,11 @@ extension VideoConferenceVM: AudioVideoObserver {
     func videoSessionDidStopWithStatus(sessionStatus: AmazonChimeSDK.MeetingSessionStatus) {
         if sessionStatus.statusCode == .audioServerHungup || sessionStatus.statusCode == .videoServiceUnavailable {
             stopMeeting() {[weak self] in
-                self?.output?.vmSessionDidEnd()
+                if let isAgentRequestToEnd = self?.isAgentRequestToEnd, isAgentRequestToEnd {
+                    self?.output?.vmSessionDidEndByAgent()
+                } else {
+                    self?.output?.vmSessionDidEndByClient()
+                }
             }
         }
         

@@ -25,6 +25,7 @@
                 <outlet property="micButton" destination="6eg-Xf-l0v" id="9c6-6A-snd"/>
                 <outlet property="prymaryScreenView" destination="RJ3-CD-WXt" id="mTt-Lb-fcN"/>
                 <outlet property="recordTimeLabel" destination="vZ3-s7-WPI" id="v46-ts-zwF"/>
+                <outlet property="scripIndicatorView" destination="bci-Qe-u3l" id="Ucc-Sw-LdN"/>
                 <outlet property="scriptButton" destination="DXt-rN-KFH" id="e3n-zd-KKu"/>
                 <outlet property="scriptContentView" destination="e5i-FZ-w8D" id="a49-1r-vWs"/>
                 <outlet property="secondaryScreenView" destination="cqw-yS-6qv" id="u3p-MX-9nv"/>
@@ -141,20 +142,40 @@
                         <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="e5i-FZ-w8D">
                             <rect key="frame" x="0.0" y="590.66666666666663" width="390" height="253.33333333333337"/>
                             <subviews>
-                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="CYQ-xN-w3q">
-                                    <rect key="frame" x="16" y="12" width="358" height="225.33333333333334"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <color key="textColor" systemColor="labelColor"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                </textView>
+                                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bci-Qe-u3l" userLabel="indicator">
+                                    <rect key="frame" x="159" y="12" width="72" height="6"/>
+                                    <color key="backgroundColor" systemColor="systemGray5Color"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="6" id="fcQ-Pi-fbz"/>
+                                        <constraint firstAttribute="width" constant="72" id="ke4-Wl-luX"/>
+                                    </constraints>
+                                    <userDefinedRuntimeAttributes>
+                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                            <integer key="value" value="3"/>
+                                        </userDefinedRuntimeAttribute>
+                                    </userDefinedRuntimeAttributes>
+                                </view>
+                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="82K-9g-fvJ">
+                                    <rect key="frame" x="16" y="30.000000000000014" width="358" height="207.33333333333337"/>
+                                    <subviews>
+                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="CYQ-xN-w3q">
+                                            <rect key="frame" x="0.0" y="0.0" width="358" height="207.33333333333334"/>
+                                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                            <color key="textColor" systemColor="labelColor"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                        </textView>
+                                    </subviews>
+                                </stackView>
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
-                                <constraint firstItem="CYQ-xN-w3q" firstAttribute="leading" secondItem="e5i-FZ-w8D" secondAttribute="leading" constant="16" id="2sb-fD-V0I"/>
-                                <constraint firstAttribute="trailing" secondItem="CYQ-xN-w3q" secondAttribute="trailing" constant="16" id="I01-QE-zSJ"/>
-                                <constraint firstItem="CYQ-xN-w3q" firstAttribute="top" secondItem="e5i-FZ-w8D" secondAttribute="top" constant="12" id="SRu-dW-hIO"/>
-                                <constraint firstAttribute="bottom" secondItem="CYQ-xN-w3q" secondAttribute="bottom" constant="16" id="uRs-YG-zn3"/>
+                                <constraint firstItem="bci-Qe-u3l" firstAttribute="top" secondItem="e5i-FZ-w8D" secondAttribute="top" constant="12" id="0an-nh-Zfw"/>
+                                <constraint firstItem="bci-Qe-u3l" firstAttribute="centerX" secondItem="e5i-FZ-w8D" secondAttribute="centerX" id="1jB-yu-jK0"/>
+                                <constraint firstAttribute="trailing" secondItem="82K-9g-fvJ" secondAttribute="trailing" constant="16" id="2Rl-UR-1Mp"/>
+                                <constraint firstItem="82K-9g-fvJ" firstAttribute="leading" secondItem="e5i-FZ-w8D" secondAttribute="leading" constant="16" id="MiW-KA-nE5"/>
+                                <constraint firstItem="82K-9g-fvJ" firstAttribute="top" secondItem="bci-Qe-u3l" secondAttribute="bottom" constant="12" id="b3f-af-2DM"/>
+                                <constraint firstAttribute="bottom" secondItem="82K-9g-fvJ" secondAttribute="bottom" constant="16" id="i9H-Iq-hyL"/>
                             </constraints>
                         </view>
                     </subviews>
@@ -344,6 +365,9 @@
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray5Color">
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

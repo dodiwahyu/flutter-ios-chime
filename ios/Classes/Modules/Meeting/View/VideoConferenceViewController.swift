@@ -10,6 +10,7 @@ import AmazonChimeSDK
 import AmazonChimeSDKMedia
 import Flutter
 import Connectivity
+import SVProgressHUD
 
 class VideoConferenceViewController: UIViewController {
     var viewModel: VideoConferenceVM!
@@ -35,6 +36,7 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var micButton: UIButton!
     @IBOutlet weak var scriptButton: UIButton!
     
+    @IBOutlet weak var scripIndicatorView: UIView!
     @IBOutlet weak var scriptContentView: UIView!
     @IBOutlet weak var textView: UITextView!
     
@@ -131,8 +133,7 @@ class VideoConferenceViewController: UIViewController {
     }
     
     private func resetState() {
-        contentRecordingView.isHidden = true
-        recordTimeLabel.text = ""
+        recordTimeLabel.text = "00:00"
         scriptContentView.isHidden = true
     }
     
@@ -145,6 +146,7 @@ class VideoConferenceViewController: UIViewController {
         secondaryScreenView.backgroundColor = .clear
         statusAlertView.backgroundColor = AppColors.primary
         
+        scripIndicatorView.backgroundColor = AppColors.grey
         scriptContentView.clipsToBounds = true
         scriptContentView.layer.cornerRadius = 12
         scriptContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -152,7 +154,7 @@ class VideoConferenceViewController: UIViewController {
         maskSecondaryScreenView.backgroundColor = AppColors.grey
         maskSecondaryScreenView.isHidden = false
         maskImageView.image = .fromCurrentBundle(with: "image_profile")
-        maskDescLabel.text = "CONFERENCE.WAITING_TITLE".localized().capitalized
+        maskDescLabel.text = "CONFERENCE.WAITING_TITLE".localized()
         
         settingButton.setTitle("", for: .normal)
         settingButton.setImage(.fromCurrentBundle(with: "icon_more"), for: .normal)
@@ -188,10 +190,17 @@ class VideoConferenceViewController: UIViewController {
         let attibuted = NSMutableAttributedString()
         
         let title = "CONFERENCE.SCRIPT_AGENT_TITLE".localized()
-        attibuted.append(NSAttributedString(string: title + "\n\n", attributes: [.font: AppFonts.font(size: 15.0, weight: .bold)]))
+        attibuted.append(NSAttributedString(string: title + ":\n", attributes: [.font: AppFonts.font(size: 15.0, weight: .medium)]))
         
-        let content = viewModel.wordingText ?? "CONFERENCE.SCRIPT_EMPTY".localized()
-        attibuted.append(NSAttributedString(string: content, attributes: [.font: AppFonts.font(size: 13.0, weight: .regular)]))
+        let content = viewModel.wordingTextAgent ?? "CONFERENCE.SCRIPT_EMPTY".localized()
+        attibuted.append(NSAttributedString(string: content + "\n\n", attributes: [.font: AppFonts.font(size: 13.0, weight: .regular)]))
+        
+        
+        let titleClient = "CONFERENCE.SCRIPT_CLIENT_TITLE".localized()
+        attibuted.append(NSAttributedString(string: titleClient + ":\n", attributes: [.font: AppFonts.font(size: 15.0, weight: .medium)]))
+        
+        let contentClient = viewModel.wordingTextClient ?? "CONFERENCE.SCRIPT_EMPTY".localized()
+        attibuted.append(NSAttributedString(string: contentClient, attributes: [.font: AppFonts.font(size: 13.0, weight: .regular)]))
         
         textView.attributedText = attibuted
     }
@@ -213,12 +222,6 @@ class VideoConferenceViewController: UIViewController {
     
     private func showRecordingTime(_ current: String) {
         recordTimeLabel.text = current
-        
-        if (contentRecordingView.isHidden) {
-            UIView.animate(withDuration: 0.3, delay: 0.0) {
-                self.contentRecordingView.isHidden = false
-            }
-        }
     }
     
     private func bindView() {
@@ -322,12 +325,6 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
         session.audioVideo.bindVideoView(videoView: secondaryScreenView, tileId: tileId)
     }
     
-    func vmSessionDidEnd() {
-        DialogVC.show(from: self, type: .Info, message: "CONFERENCE.MESSAGE_SESSION_END".localized(), onYes:  { [weak self] in
-            self?.dismiss(animated: true)
-        })
-    }
-    
     func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileState: VideoTileState) {
         
         var multiplier: CGFloat = 130/170
@@ -341,4 +338,16 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
         
         setRatioSecondaryScreen(multiplier)
     }
+    
+    func vmSessionDidEndByAgent() {
+        SVProgressHUD.dismiss()
+        self.dismiss(animated: true)
+    }
+    
+    func vmSessionDidEndByClient() {
+        DialogVC.show(from: self, type: .Info, message: "CONFERENCE.MESSAGE_SESSION_END".localized(), onYes:  { [weak self] in
+            self?.dismiss(animated: true)
+        })
+    }
+    
 }

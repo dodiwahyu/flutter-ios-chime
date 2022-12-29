@@ -74,7 +74,8 @@ class MeetingModule {
                     attendee: attendee,
                     createMeetingResponse: meetingResponse,
                     createAttendeeResponse: attendeeResponse,
-                    wordingText: sessionEntity.wordingText,
+                    wordingTextAgent: sessionEntity.wordingTextAgent,
+                    wordingTextClient: sessionEntity.wordingTextClient,
                     isAsAgent: asAgent
                 )
                 let vc = VideoConferenceViewController()

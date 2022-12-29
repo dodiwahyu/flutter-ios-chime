@@ -16,9 +16,10 @@ BUTTON.BACK = "Kembali";
 CONFIRM = "Konfirmasi";
 CONFIRM.END_MEETING = "Apakah Anda yakin mau mengakhiri percakapan?";
 
-CONFERENCE.WAITING_TITLE = "Menunggu pengguna lain";
+CONFERENCE.WAITING_TITLE = "Waiting other user";
 CONFERENCE.SCRIPT_EMPTY = "Tidak ada skrip";
 CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
+CONFERENCE.SCRIPT_CLIENT_TITLE = "Calon Pemegang Polis";
 CONFERENCE.MESSAGE_MEETING_WARNING = "Sisa waktu sebelum video berakhir otomatis adalah %@ menit lagi.";
 CONFERENCE.MESSAGE_CONFIRM_END = "Apakah anda yakin ingin mengakhiri video conference?";
 CONFERENCE.MESSAGE_SESSION_END = "Maaf sesi video call sudah berakhir";

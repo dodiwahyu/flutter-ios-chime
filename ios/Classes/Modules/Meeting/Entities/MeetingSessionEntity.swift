@@ -15,7 +15,8 @@ struct MeetingSessionEntity: Codable {
     let attendee: AttendeeEntity?
     let recordUrl: String?
     let recordDate: String?
-    let wordingText: String?
+    let wordingTextAgent: String?
+    let wordingTextClient: String?
     let agentJoin: Bool?
     let clientJoin: Bool?
     let asAgent: Bool?
@@ -27,7 +28,8 @@ struct MeetingSessionEntity: Codable {
         case attendee
         case recordUrl
         case recordDate
-        case wordingText
+        case wordingTextAgent
+        case wordingTextClient
         case agentJoin
         case clientJoin
         case asAgent
@@ -41,7 +43,8 @@ struct MeetingSessionEntity: Codable {
         attendee = values[.attendee]
         recordUrl = values[.recordUrl]
         recordDate = values[.recordDate]
-        wordingText = values[.wordingText]
+        wordingTextAgent = values[.wordingTextAgent]
+        wordingTextClient = values[.wordingTextClient]
         agentJoin = values[.agentJoin]
         clientJoin = values[.clientJoin]
         asAgent = values[.asAgent]
