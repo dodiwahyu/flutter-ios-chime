@@ -54,7 +54,7 @@ class SettingViewController: BottomPopupViewController {
         speakerLabel.text = meetingSession.audioVideo.getActiveAudioDevice()?.label ?? "Unkown"
     }
     
-    @IBAction func didTapSpeakerOption(_ sender: Any) {
+    @IBAction func didTapSpeakerOption(_ sender: UIControl) {
         let devices = meetingSession.audioVideo.listAudioDevices()
         
         let alert = UIAlertController(title: "Audio Dvices", message: "Pilih audio device", preferredStyle: .actionSheet)
@@ -69,6 +69,10 @@ class SettingViewController: BottomPopupViewController {
         
         let cancel = UIAlertAction(title: "Cancel", style: .destructive)
         alert.addAction(cancel)
+        
+        if let popoverController = alert.popoverPresentationController {
+            popoverController.sourceView = sender
+        }
         
         self.present(alert, animated: true)
     }
