@@ -21,5 +21,5 @@ CONFERENCE.SCRIPT_EMPTY = "Tidak ada skrip";
 CONFERENCE.SCRIPT_AGENT_TITLE = "Tenaga Pemasar";
 CONFERENCE.SCRIPT_CLIENT_TITLE = "Calon Pemegang Polis";
 CONFERENCE.MESSAGE_MEETING_WARNING = "Sisa waktu sebelum video berakhir otomatis adalah %@ menit lagi.";
-CONFERENCE.MESSAGE_CONFIRM_END = "Apakah anda yakin ingin mengakhiri video conference?";
+CONFERENCE.MESSAGE_CONFIRM_END = "Apakah Anda yakin mau mengakhiri percakapan?";
 CONFERENCE.MESSAGE_SESSION_END = "Maaf sesi video call sudah berakhir";
