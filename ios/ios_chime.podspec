@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'ios_chime'
-  s.version          = '0.1.4'
+  s.version          = '0.1.5-1.8.dev'
   s.summary          = 'ios_chime adalah plugin untuk handle video conference AMS'
   s.description      = <<-DESC
 Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart

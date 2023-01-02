@@ -17,6 +17,11 @@ class MethodChannelIosChime extends IosChimePlatform {
   }
 
   @override
+  Future<bool?> setLangCode(String langCode) {
+    return methodChannel.invokeMethod<bool>('setLang', langCode);
+  }
+
+  @override
   Future<void> hideLoading() {
     return methodChannel.invokeMethod('hideLoading');
   }

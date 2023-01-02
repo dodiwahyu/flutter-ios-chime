@@ -17,6 +17,11 @@ let WARNING_RECORD_TIME: Double = 5
 protocol VideoConferenceVMOutput: AnyObject {
     func vmDidBindLocalScreen(for session: DefaultMeetingSession, tileId: Int)
     func vmDidBindContentScreen(for session: DefaultMeetingSession, tileId: Int)
+    func vmDidUnBindLocalScreen(for session: DefaultMeetingSession, tileId: Int)
+    func vmDidUnBindContentScreen(for session: DefaultMeetingSession, tileId: Int)
+    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileState: AmazonChimeSDK.VideoTileState)
+    func vmSessionDidEndByAgent()
+    func vmSessionDidEndByClient()
 }
 
 class VideoConferenceVM {
@@ -27,7 +32,8 @@ class VideoConferenceVM {
     var spajNumber: String!
     var currentAttendee: AttendeeEntity!
     var isAsAgent: Bool = false
-    var wordingText: String?
+    var wordingTextAgent: String?
+    var wordingTextClient: String?
     
     var audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K)
     var meetingSessionConfig: MeetingSessionConfiguration!
@@ -35,6 +41,10 @@ class VideoConferenceVM {
     var listAttendeeJoinded: [AttendeeInfo] = []
     var isRecording: Bool = false
     var isJoinned: Bool?
+    var isAgentRequestToEnd: Bool?
+    
+    let timeFormater = DateComponentsFormatter()
+    let minuteFormatter = DateComponentsFormatter()
     
     // Timer
     private var startTime: Date?
@@ -111,13 +121,15 @@ class VideoConferenceVM {
          attendee: AttendeeEntity,
          createMeetingResponse: AmazonChimeSDK.CreateMeetingResponse,
          createAttendeeResponse: AmazonChimeSDK.CreateAttendeeResponse,
-         wordingText: String?,
+         wordingTextAgent: String?,
+         wordingTextClient: String?,
          isAsAgent: Bool
     ) {
         self.meetingUUID = uuid
         self.spajNumber = spajNumber
         self.currentAttendee = attendee
-        self.wordingText = wordingText
+        self.wordingTextAgent = wordingTextAgent
+        self.wordingTextClient = wordingTextClient
         self.isAsAgent = isAsAgent
         self.meetingSessionConfig = MeetingSessionConfiguration(
             createMeetingResponse: createMeetingResponse,
@@ -127,6 +139,14 @@ class VideoConferenceVM {
             configuration: self.meetingSessionConfig,
             logger: self.logger.chimeLogger
         )
+        
+        timeFormater.unitsStyle = .positional
+        timeFormater.allowedUnits = [.minute, .second]
+        timeFormater.zeroFormattingBehavior = .pad
+        
+        minuteFormatter.unitsStyle = .positional
+        minuteFormatter.allowedUnits = [.minute, .second]
+        minuteFormatter.zeroFormattingBehavior = .pad
     }
     
     func addObserver() {
@@ -159,7 +179,6 @@ class VideoConferenceVM {
                 try audioSession.setMode(.voiceChat)
             }
             
-            self.audioVideoConfig = AudioVideoConfiguration(audioMode: .stereo48K, callKitEnabled: true)
             try self.meetingSession.audioVideo.start(audioVideoConfiguration: self.audioVideoConfig)
             try self.meetingSession.audioVideo.startLocalVideo()
             self.meetingSession.audioVideo.startRemoteVideo()
@@ -214,36 +233,30 @@ extension VideoConferenceVM {
     }
     
     func fireTimeRecord() {
-        if recordTimer == nil {
-            let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timeRecordDidFire(_:)), userInfo: nil, repeats: true)
-            recordTimer = timer
-        }
+        guard recordTimer == nil else { return }
         
-        recordTimer?.fire()
+        let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timeRecordDidFire(_:)), userInfo: nil, repeats: true)
         maxRecordTime = Date().addingTimeInterval(TimeInterval(MAX_RECORD_TIME * 60))
+        recordTimer = timer
+        recordTimer?.fire()
     }
     
     @objc
     private func timeRecordDidFire(_ sender: Timer) {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .positional
-        formatter.allowedUnits = [.hour, .minute, .second]
-        formatter.zeroFormattingBehavior = .pad
-        
         let startDate = startTime ?? Date()
         let now = Date()
         let elapsed = now - startDate
         
         let max: Double = Double(60 * MAX_RECORD_TIME) // 10 minutes
         if (elapsed <= max) {
-            if let strElapsed = formatter.string(from: elapsed) {
+            if let strElapsed = timeFormater.string(from: elapsed) {
                 self.onTimeDidTick?(strElapsed)
             }
             
             if let endTime = self.maxRecordTime,
                elapsed >= (max - Double(60 * WARNING_RECORD_TIME)) {
                 let remaining = endTime - now
-                if let strRemaining = formatter.string(from: remaining) {
+                if let strRemaining = minuteFormatter.string(from: remaining) {
                     self.onTimeAlert?(strRemaining)
                 }
             }
@@ -262,9 +275,11 @@ extension VideoConferenceVM {
         let meetingId = meetingSessionConfig.meetingId
         do {
             let payload = try AppEventType.MeetingSessionRequestEnd.payload(args: ["MeetingID": meetingId])
+            isAgentRequestToEnd = true
             eventSink?(payload)
         } catch {
             logger.fault(msg: error.localizedDescription)
+            isAgentRequestToEnd = nil
         }
     }
     
@@ -337,6 +352,9 @@ extension VideoConferenceVM {
     
     func stopMeeting(_ completion: DefaultPluginCompletion? = nil) {
         meetingSession.audioVideo.stop()
+        isRecording = false
+        recordTimer?.invalidate()
+        recordTimer = nil
         completion?()
     }
     
@@ -353,18 +371,32 @@ extension VideoConferenceVM: VideoTileObserver {
         if tileState.isLocalTile {
             output?.vmDidBindLocalScreen(for: meetingSession, tileId: tileState.tileId)
         } else {
-            // TODO: Screen share & Video
+            // Set secondary screen
             output?.vmDidBindContentScreen(for: meetingSession, tileId: tileState.tileId)
+            
+            // Need update secondary screen aspect ratio
+            output?.vmVideoTileSizeDidChange(for: meetingSession, tileState: tileState)
         }
         
         logger.info(msg: "ios_chime ==> videoTileDidAdd id \(tileState.tileId)")
     }
     
     func videoTileDidRemove(tileState: AmazonChimeSDK.VideoTileState) {
+        if let index = self.listAttendeeJoinded.firstIndex(where: {$0.attendeeId == tileState.attendeeId}) {
+            self.listAttendeeJoinded.remove(at: index)
+        }
+        
         meetingSession.audioVideo.unbindVideoView(tileId: tileState.tileId)
+        
+        if tileState.isLocalTile {
+            output?.vmDidUnBindLocalScreen(for: meetingSession, tileId: tileState.tileId)
+        } else {
+            output?.vmDidUnBindContentScreen(for: meetingSession, tileId: tileState.tileId)
+        }
+        
         logger.info(msg: "ios_chime ==> videoTileDidRemove id \(tileState.tileId)")
     }
-    
+
     func videoTileDidPause(tileState: AmazonChimeSDK.VideoTileState) {
         logger.info(msg: "ios_chime ==> videoTileDidPause id \(tileState.tileId)")
     }
@@ -374,7 +406,11 @@ extension VideoConferenceVM: VideoTileObserver {
     }
     
     func videoTileSizeDidChange(tileState: AmazonChimeSDK.VideoTileState) {
-        
+        if tileState.isLocalTile {
+            // Do nothing
+        } else {
+            output?.vmVideoTileSizeDidChange(for: meetingSession, tileState: tileState)
+        }
     }
     
 }
@@ -417,7 +453,17 @@ extension VideoConferenceVM: AudioVideoObserver {
     }
     
     func videoSessionDidStopWithStatus(sessionStatus: AmazonChimeSDK.MeetingSessionStatus) {
-        logger.info(msg: "ios_chime ==> video did stop with status \(sessionStatus)")
+        if sessionStatus.statusCode == .audioServerHungup || sessionStatus.statusCode == .videoServiceUnavailable {
+            stopMeeting() {[weak self] in
+                if let isAgentRequestToEnd = self?.isAgentRequestToEnd, isAgentRequestToEnd {
+                    self?.output?.vmSessionDidEndByAgent()
+                } else {
+                    self?.output?.vmSessionDidEndByClient()
+                }
+            }
+        }
+        
+        logger.info(msg: "ios_chime ==> video did stop with status \(sessionStatus.statusCode)")
     }
     
     func remoteVideoSourcesDidBecomeAvailable(sources: [AmazonChimeSDK.RemoteVideoSource]) {
@@ -474,8 +520,6 @@ extension VideoConferenceVM: RealtimeObserver {
            listAttendeeJoinded.first(where: {
                $0.attendeeId != currentAttendee.attendeeId
            }) != nil {
-            // Only for POC
-            // self.requestRecordAll()
             
             // For AMS
             self.fireTimeRecord()
@@ -514,22 +558,5 @@ extension VideoConferenceVM: EventAnalyticsObserver {
         print("\n")
         print("event-name => \(name) attributes: \(attributes)")
         print("\n")
-        
-//        if name == .meetingFailed,
-//            let status = attributes["meetingErrorMessage"] as? String {
-//
-//            if status == "audioAuthenticationRejected" {
-//                // Call request audio
-//                if let device = self.currentAudioDevice {
-//                    self.meetingSession.audioVideo.chooseAudioDevice(mediaDevice: device)
-//                }
-//
-//                do {
-//                    try self.meetingSession.audioVideo.start(audioVideoConfiguration: self.audioVideoConfig)
-//                } catch {
-//                    print("Error => \(error.localizedDescription)")
-//                }
-//            }
-//        }
     }
 }

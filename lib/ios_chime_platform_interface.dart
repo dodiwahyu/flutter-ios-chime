@@ -23,6 +23,10 @@ abstract class IosChimePlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  Future<bool?> setLangCode(String langCode) {
+    throw UnimplementedError('setLangCode() has not been implemented.');
+  }
+
   Future<bool?> requestCameraUsage() {
     throw UnimplementedError('requestCameraUsage() has not been implemented.');
   }

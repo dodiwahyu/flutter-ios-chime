@@ -4,6 +4,7 @@ import AmazonChimeSDK
 import SVProgressHUD
 
 enum FLUTTER_METHOD: String {
+    case setLang
     case requestCameraUsage
     case requestRecordPermission
     case hideLoading
@@ -57,6 +58,8 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
         logger.info(msg: "invokking \(method)")
         
         switch method {
+        case .setLang:
+            handleSetLang(args: call.arguments, result: result)
         case .requestCameraUsage:
             handleRequestCameraUsage(result: result)
         case .requestRecordPermission:
@@ -79,6 +82,15 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
             handleTest()
             break
         }
+    }
+    
+    private func handleSetLang(args: Any?, result: @escaping FlutterResult) {
+        guard let langCode = args as? String else {
+            result(false)
+            return
+        }
+        UserDefaults.standard.set(langCode, forKey: "KEY_LANG_CODE")
+        result(true)
     }
     
     private func handleJoinMeeting(args: Any?, result: @escaping FlutterResult) {
@@ -136,26 +148,6 @@ public class SwiftIosChimePlugin: NSObject, FlutterPlugin {
         let fontRegular = UIFont(name: "Poppins-Regular", size: 12.0)
         let fontMedium = UIFont(name: "Poppins-Medium", size: 12.0)
         let fontBold = UIFont(name: "Poppins-Bold", size: 12.0)
-//        print("Poppins-Regular  \(fontRegular != nil)")
-        
-        guard let topController = UIApplication.getTopViewController() else {
-            return
-        }
-        
-//        DialogVC.show(from: topController, title: "Confirmation", message: "Are you sure want to end the call?", onYes: nil, onNo: nil)
-        
-
-        let attendee = AttendeeEntity(externalUserId: "", attendeeId: "", joinToken: "")
-        let meeting = CreateMeetingResponse(meeting: Meeting(externalMeetingId: "", mediaPlacement: MediaPlacement(audioFallbackUrl: "", audioHostUrl: "", signalingUrl: "", turnControlUrl: ""), mediaRegion: "", meetingId: ""))
-        let attendeRes = CreateAttendeeResponse(attendee: Attendee(attendeeId: "", externalUserId: "", joinToken: ""))
-
-        let viewModel = VideoConferenceVM(uuid: UUID().uuidString, spajNumber: "", attendee: attendee, createMeetingResponse: meeting, createAttendeeResponse: attendeRes, wordingText: "", isAsAgent: true)
-        let vc = VideoConferenceViewController()
-        vc.viewModel = viewModel
-        vc.modalPresentationStyle = .fullScreen
-
-        topController.present(vc, animated: true)
-        
     }
 }
 

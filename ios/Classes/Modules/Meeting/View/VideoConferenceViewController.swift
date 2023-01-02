@@ -10,6 +10,7 @@ import AmazonChimeSDK
 import AmazonChimeSDKMedia
 import Flutter
 import Connectivity
+import SVProgressHUD
 
 class VideoConferenceViewController: UIViewController {
     var viewModel: VideoConferenceVM!
@@ -35,6 +36,7 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var micButton: UIButton!
     @IBOutlet weak var scriptButton: UIButton!
     
+    @IBOutlet weak var scripIndicatorView: UIView!
     @IBOutlet weak var scriptContentView: UIView!
     @IBOutlet weak var textView: UITextView!
     
@@ -43,6 +45,7 @@ class VideoConferenceViewController: UIViewController {
     @IBOutlet weak var maskImageView: UIImageView!
     
     @IBOutlet weak var bottomConstraintSecondVideoView: NSLayoutConstraint!
+    var secondaryScreenHeight: NSLayoutConstraint?
     
     private var connectivity = Connectivity()
     private var isSessionStarted = false
@@ -90,8 +93,8 @@ class VideoConferenceViewController: UIViewController {
     @IBAction func didTapEndButton(_ sender: UIButton) {
         DialogVC.show(
             from: self,
-            title: "Warning",
-            message: "Akah anda yakin ingin mengakhiri video conference",
+            type: .Confirmation,
+            message: "CONFERENCE.MESSAGE_CONFIRM_END".localized(),
             onYes: {[weak self] in
                 self?.viewModel.requestEndMeeting()
             },
@@ -112,8 +115,8 @@ class VideoConferenceViewController: UIViewController {
     @IBAction func didTapBackButton(_ sender: Any) {
         DialogVC.show(
             from: self,
-            title: "Warning",
-            message: "Akah anda yakin ingin mengakhiri video conference",
+            type: .Confirmation,
+            message: "CONFERENCE.MESSAGE_CONFIRM_END".localized(),
             onYes: {[weak self] in
                 self?.viewModel.requestEndMeeting()
             }, onNo: nil)
@@ -130,8 +133,7 @@ class VideoConferenceViewController: UIViewController {
     }
     
     private func resetState() {
-        contentRecordingView.isHidden = true
-        recordTimeLabel.text = ""
+        recordTimeLabel.text = "00:00"
         scriptContentView.isHidden = true
     }
     
@@ -143,10 +145,16 @@ class VideoConferenceViewController: UIViewController {
         prymaryScreenView.backgroundColor = .white
         secondaryScreenView.backgroundColor = .clear
         statusAlertView.backgroundColor = AppColors.primary
+        
+        scripIndicatorView.backgroundColor = AppColors.grey
+        scriptContentView.clipsToBounds = true
+        scriptContentView.layer.cornerRadius = 12
         scriptContentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        
         maskSecondaryScreenView.backgroundColor = AppColors.grey
         maskSecondaryScreenView.isHidden = false
         maskImageView.image = .fromCurrentBundle(with: "image_profile")
+        maskDescLabel.text = "CONFERENCE.WAITING_TITLE".localized()
         
         settingButton.setTitle("", for: .normal)
         settingButton.setImage(.fromCurrentBundle(with: "icon_more"), for: .normal)
@@ -156,16 +164,19 @@ class VideoConferenceViewController: UIViewController {
         micButton.setImage(.fromCurrentBundle(with: "icon_mic_unmute"), for: .normal)
         scriptButton.setTitle("", for: .normal)
         scriptButton.setImage(.fromCurrentBundle(with: "icon_file"), for: .normal)
+        backButton.setTitle("BUTTON.BACK".localized(), for: .normal)
         backButton.titleLabel?.font = AppFonts.font(size: 12, weight: .semibold)
         backButton.setTitleColor(AppColors.primary, for: .normal)
         
         titleLabel.font = AppFonts.font(size: 14.0, weight: .semibold)
-        titleLabel.font = AppFonts.font(size: 14.0, weight: .semibold)
+        titleLabel.textColor = AppColors.textColor
+        titleLabel.isHidden = false
+        titleLabel.text = "Video Recording"
+
         backButton.titleLabel?.font = AppFonts.font(size: 14.0, weight: .semibold)
         backButton.titleLabel?.textColor = AppColors.primary
         textView.font = AppFonts.font(size: 12.0, weight: .medium)
         textView.textColor = AppColors.textColor
-        textView.text = viewModel.wordingText
         textView.backgroundColor = .white
         
         recordTimeLabel.textColor = .black
@@ -174,6 +185,27 @@ class VideoConferenceViewController: UIViewController {
         connectivityView.backgroundColor = AppColors.red
         
         resetState()
+        setupScript()
+        setRatioSecondaryScreen(130/170)
+    }
+    
+    private func setupScript() {
+        let attibuted = NSMutableAttributedString()
+        
+        let title = "CONFERENCE.SCRIPT_AGENT_TITLE".localized()
+        attibuted.append(NSAttributedString(string: title + ":\n", attributes: [.font: AppFonts.font(size: 15.0, weight: .medium)]))
+        
+        let content = viewModel.wordingTextAgent ?? "CONFERENCE.SCRIPT_EMPTY".localized()
+        attibuted.append(NSAttributedString(string: content + "\n\n", attributes: [.font: AppFonts.font(size: 13.0, weight: .regular)]))
+        
+        
+        let titleClient = "CONFERENCE.SCRIPT_CLIENT_TITLE".localized()
+        attibuted.append(NSAttributedString(string: titleClient + ":\n", attributes: [.font: AppFonts.font(size: 15.0, weight: .medium)]))
+        
+        let contentClient = viewModel.wordingTextClient ?? "CONFERENCE.SCRIPT_EMPTY".localized()
+        attibuted.append(NSAttributedString(string: contentClient, attributes: [.font: AppFonts.font(size: 13.0, weight: .regular)]))
+        
+        textView.attributedText = attibuted
     }
     
     private func showStatusAlert(with message: String) {
@@ -193,14 +225,7 @@ class VideoConferenceViewController: UIViewController {
     
     private func showRecordingTime(_ current: String) {
         recordTimeLabel.text = current
-        
-        if (contentRecordingView.isHidden) {
-            UIView.animate(withDuration: 0.3, delay: 0.0) {
-                self.contentRecordingView.isHidden = false
-            }
-        }
     }
-    
     
     private func bindView() {
         viewModel.addObserver()
@@ -209,7 +234,7 @@ class VideoConferenceViewController: UIViewController {
             self?.showRecordingTime(args)
         }
         viewModel.onTimeAlert = {[weak self] (args) in
-            self?.showStatusAlert(with: "Waktu recording tersisa \(args)")
+            self?.showStatusAlert(with: "CONFERENCE.MESSAGE_MEETING_WARNING".localizedWithFormat(args))
         }
         
         viewModel.onTimesup = {[weak self] in
@@ -261,11 +286,39 @@ class VideoConferenceViewController: UIViewController {
             connectivityView.backgroundColor = AppColors.orange
         }
     }
+    
+    private func setRatioSecondaryScreen(_ multiplier: CGFloat) {
+        if let current = secondaryScreenHeight {
+            NSLayoutConstraint.deactivate([current])
+            secondaryScreenView.removeConstraint(current)
+        }
+        
+        secondaryScreenHeight = NSLayoutConstraint(
+            item: secondaryScreenView!,
+            attribute: .width,
+            relatedBy: .equal,
+            toItem: secondaryScreenView!,
+            attribute: .height,
+            multiplier: multiplier,
+            constant: 0)
+        
+        secondaryScreenView.addConstraint(secondaryScreenHeight!)
+        NSLayoutConstraint.activate([secondaryScreenHeight!])
+        
+        view.layoutIfNeeded()
+    }
 }
 
 
 
 extension VideoConferenceViewController: VideoConferenceVMOutput {
+    func vmDidUnBindLocalScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
+    }
+    
+    func vmDidUnBindContentScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
+        maskSecondaryScreenView.isHidden = false
+    }
+    
     func vmDidBindLocalScreen(for session: AmazonChimeSDK.DefaultMeetingSession, tileId: Int) {
         session.audioVideo.bindVideoView(videoView: prymaryScreenView, tileId: tileId)
     }
@@ -274,4 +327,30 @@ extension VideoConferenceViewController: VideoConferenceVMOutput {
         maskSecondaryScreenView.isHidden = true
         session.audioVideo.bindVideoView(videoView: secondaryScreenView, tileId: tileId)
     }
+    
+    func vmVideoTileSizeDidChange(for session: DefaultMeetingSession, tileState: VideoTileState) {
+        
+        var multiplier: CGFloat = 130/170
+        
+        let height = tileState.videoStreamContentHeight
+        let width = tileState.videoStreamContentWidth
+        
+        if height > 0 && width > 0 {
+            multiplier = CGFloat(width) / CGFloat(height)
+        }
+        
+        setRatioSecondaryScreen(multiplier)
+    }
+    
+    func vmSessionDidEndByAgent() {
+        SVProgressHUD.dismiss()
+        self.dismiss(animated: true)
+    }
+    
+    func vmSessionDidEndByClient() {
+        DialogVC.show(from: self, type: .Info, message: "CONFERENCE.MESSAGE_SESSION_END".localized(), onYes:  { [weak self] in
+            self?.dismiss(animated: true)
+        })
+    }
+    
 }
