@@ -169,7 +169,10 @@ class VideoConferenceViewController: UIViewController {
         backButton.setTitleColor(AppColors.primary, for: .normal)
         
         titleLabel.font = AppFonts.font(size: 14.0, weight: .semibold)
-        titleLabel.font = AppFonts.font(size: 14.0, weight: .semibold)
+        titleLabel.textColor = AppColors.textColor
+        titleLabel.isHidden = false
+        titleLabel.text = "Video Recording"
+
         backButton.titleLabel?.font = AppFonts.font(size: 14.0, weight: .semibold)
         backButton.titleLabel?.textColor = AppColors.primary
         textView.font = AppFonts.font(size: 12.0, weight: .medium)
