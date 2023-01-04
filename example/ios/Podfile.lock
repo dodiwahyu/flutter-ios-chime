@@ -1,0 +1,41 @@
+PODS:
+  - AmazonChimeSDK-Bitcode (0.22.3):
+    - AmazonChimeSDKMedia-Bitcode (~> 0.17.7)
+  - AmazonChimeSDKMachineLearning-Bitcode (0.1.0)
+  - AmazonChimeSDKMedia-Bitcode (0.17.7)
+  - Flutter (1.0.0)
+  - ios_chime (0.0.1):
+    - AmazonChimeSDK-Bitcode
+    - AmazonChimeSDKMachineLearning-Bitcode
+    - Flutter
+    - Toast-Swift (~> 5.0.1)
+  - Toast-Swift (5.0.1)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - ios_chime (from `.symlinks/plugins/ios_chime/ios`)
+
+SPEC REPOS:
+  trunk:
+    - AmazonChimeSDK-Bitcode
+    - AmazonChimeSDKMachineLearning-Bitcode
+    - AmazonChimeSDKMedia-Bitcode
+    - Toast-Swift
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  ios_chime:
+    :path: ".symlinks/plugins/ios_chime/ios"
+
+SPEC CHECKSUMS:
+  AmazonChimeSDK-Bitcode: 451922fe2345649b1f86d1eb5c67811448d899dd
+  AmazonChimeSDKMachineLearning-Bitcode: 237d375c14c99ab716a3372fab6320364fe6ba64
+  AmazonChimeSDKMedia-Bitcode: 6a9e2d9e3efc0b579940a735f605a503f19f393e
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  ios_chime: f6cc7b11d4825e31fc19c09372893fd3789aab48
+  Toast-Swift: 9b6a70f28b3bf0b96c40d46c0c4b9d6639846711
+
+PODFILE CHECKSUM: ea7f7e61322df9fab62ec026de227f8fd75d55c7
+
+COCOAPODS: 1.11.3

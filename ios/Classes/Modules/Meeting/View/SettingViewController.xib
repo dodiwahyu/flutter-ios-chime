@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingViewController" customModule="ios_chime" customModuleProvider="target">
+            <connections>
+                <outlet property="speakerField" destination="bcM-hp-b8o" id="ckr-Tg-5XP"/>
+                <outlet property="speakerLabel" destination="BiF-pU-zfX" id="Rcm-Z6-s0R"/>
+                <outlet property="speakerTagLabel" destination="N9s-tb-zr2" id="SFe-yL-j9Z"/>
+                <outlet property="titleLabel" destination="2K1-hc-Qkr" id="PuS-jL-nnq"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6I3-Y8-9L3">
+                    <rect key="frame" x="171.66666666666666" y="75" width="50" height="5"/>
+                    <color key="backgroundColor" red="0.68235294117647061" green="0.71372549019607845" blue="0.75686274509803919" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="5" id="0ul-4O-xW0"/>
+                        <constraint firstAttribute="width" constant="50" id="uuQ-Ms-Gon"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <real key="value" value="2.5"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Device Settings" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2K1-hc-Qkr">
+                    <rect key="frame" x="16.000000000000007" y="104" width="113.66666666666669" height="19.333333333333329"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Speaker" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N9s-tb-zr2">
+                    <rect key="frame" x="32" y="139.33333333333334" width="39.333333333333343" height="12"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view clipsSubviews="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bcM-hp-b8o" customClass="UIControl">
+                    <rect key="frame" x="16" y="157.33333333333334" width="361" height="42"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Phone Mic and Speakers" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BiF-pU-zfX">
+                            <rect key="frame" x="12" y="6" width="309" height="30"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon_dropdown" translatesAutoresizingMaskIntoConstraints="NO" id="kbA-pB-Lrm">
+                            <rect key="frame" x="333" y="13" width="16" height="16"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="16" id="LCy-nW-RiD"/>
+                                <constraint firstAttribute="height" constant="16" id="abD-cJ-wHi"/>
+                            </constraints>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.95294117647058818" green="0.95686274509803915" blue="0.97647058823529409" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstItem="BiF-pU-zfX" firstAttribute="leading" secondItem="bcM-hp-b8o" secondAttribute="leading" constant="12" id="6Lo-RV-wZo"/>
+                        <constraint firstItem="kbA-pB-Lrm" firstAttribute="centerY" secondItem="bcM-hp-b8o" secondAttribute="centerY" id="BEN-Pr-bWl"/>
+                        <constraint firstItem="BiF-pU-zfX" firstAttribute="top" secondItem="bcM-hp-b8o" secondAttribute="top" constant="6" id="I4Y-9c-PtQ"/>
+                        <constraint firstItem="kbA-pB-Lrm" firstAttribute="leading" secondItem="BiF-pU-zfX" secondAttribute="trailing" constant="12" id="N20-Oh-gF2"/>
+                        <constraint firstAttribute="trailing" secondItem="kbA-pB-Lrm" secondAttribute="trailing" constant="12" id="qD4-Do-VZ2"/>
+                        <constraint firstAttribute="height" constant="42" id="vEF-Yg-DjH"/>
+                        <constraint firstAttribute="bottom" secondItem="BiF-pU-zfX" secondAttribute="bottom" constant="6" id="zDw-mE-sWf"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                            <integer key="value" value="6"/>
+                        </userDefinedRuntimeAttribute>
+                    </userDefinedRuntimeAttributes>
+                    <connections>
+                        <action selector="didTapSpeakerOption:" destination="-1" eventType="touchUpInside" id="aZ0-eg-Xym"/>
+                    </connections>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+            <constraints>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="bcM-hp-b8o" secondAttribute="trailing" constant="16" id="9YJ-gU-xAn"/>
+                <constraint firstItem="2K1-hc-Qkr" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="ByB-Dy-7oU"/>
+                <constraint firstItem="6I3-Y8-9L3" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" constant="16" id="Nyd-ru-Ecl"/>
+                <constraint firstItem="6I3-Y8-9L3" firstAttribute="centerX" secondItem="fnl-2z-Ty3" secondAttribute="centerX" id="T7T-j5-RV4"/>
+                <constraint firstItem="bcM-hp-b8o" firstAttribute="top" secondItem="N9s-tb-zr2" secondAttribute="bottom" constant="6" id="UJg-Ux-Uwj"/>
+                <constraint firstItem="N9s-tb-zr2" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="32" id="dHj-EU-j1L"/>
+                <constraint firstItem="N9s-tb-zr2" firstAttribute="top" secondItem="2K1-hc-Qkr" secondAttribute="bottom" constant="16" id="fBS-c7-fHA"/>
+                <constraint firstItem="bcM-hp-b8o" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" constant="16" id="h7X-QL-G2U"/>
+                <constraint firstItem="2K1-hc-Qkr" firstAttribute="top" secondItem="6I3-Y8-9L3" secondAttribute="bottom" constant="24" id="tGB-El-oEr"/>
+            </constraints>
+            <point key="canvasLocation" x="6.8702290076335872" y="0.0"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="icon_dropdown" width="16" height="16"/>
+    </resources>
+</document>
