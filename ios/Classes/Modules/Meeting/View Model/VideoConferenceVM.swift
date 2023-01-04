@@ -11,6 +11,7 @@ import AmazonChimeSDKMedia
 import SVProgressHUD
 import AVFAudio
 
+let MAX_WAITING_ROOM: Int = 30
 let MAX_RECORD_TIME: Double = 10
 let WARNING_RECORD_TIME: Double = 5
 
@@ -266,16 +267,32 @@ extension VideoConferenceVM {
         
         startTime = startDate
     }
+    
+    private func fireWaitingTimer() {
+        var maxTime: Int = MAX_WAITING_ROOM * 60
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
+            maxTime -= 1
+            
+            if (self.listAttendeeJoinded.count > 1) {
+                timer.invalidate()
+            } else{
+                if maxTime == 0 {
+                    self.requestEndMeeting(isAgentRequestToEnd: false)
+                    timer.invalidate()
+                }
+            }
+        }
+    }
 }
 
 // Comunting with dart
 extension VideoConferenceVM {
-    func requestEndMeeting() {
+    func requestEndMeeting(isAgentRequestToEnd isRequested: Bool = true) {
         SVProgressHUD.show()
         let meetingId = meetingSessionConfig.meetingId
         do {
             let payload = try AppEventType.MeetingSessionRequestEnd.payload(args: ["MeetingID": meetingId])
-            isAgentRequestToEnd = true
+            isAgentRequestToEnd = isRequested
             eventSink?(payload)
         } catch {
             logger.fault(msg: error.localizedDescription)
@@ -328,6 +345,7 @@ extension VideoConferenceVM {
             let payload = try AppEventType.JoinRoomByAgent.payload(args: ["SpajNumber": spajNumber])
             SVProgressHUD.show()
             eventSink?(payload)
+            fireWaitingTimer()
         } catch {
             logger.fault(msg: error.localizedDescription)
         }
