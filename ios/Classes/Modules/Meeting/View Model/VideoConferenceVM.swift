@@ -326,10 +326,9 @@ extension VideoConferenceVM {
         }
     }
     
-    func requestStopRecording() {
+    func sendStopRecording() {
         do {
             let payload = try AppEventType.StopRecordMeeting.payload(args: ["uuid": meetingUUID])
-            SVProgressHUD.show()
             eventSink?(payload)
         } catch {
             logger.fault(msg: error.localizedDescription)
@@ -350,6 +349,7 @@ extension VideoConferenceVM {
             logger.fault(msg: error.localizedDescription)
         }
     }
+    
 }
 
 // Response from dart
@@ -478,6 +478,9 @@ extension VideoConferenceVM: AudioVideoObserver {
                 } else {
                     self?.output?.vmSessionDidEndByClient()
                 }
+                
+                
+                self?.sendStopRecording()
             }
         }
         
