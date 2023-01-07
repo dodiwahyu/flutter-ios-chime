@@ -31,6 +31,8 @@ class VideoConferenceVM {
     
     var meetingUUID: String!
     var spajNumber: String!
+    var recordDate: Date?
+    
     var currentAttendee: AttendeeEntity!
     var isAsAgent: Bool = false
     var wordingTextAgent: String?
@@ -124,6 +126,7 @@ class VideoConferenceVM {
          createAttendeeResponse: AmazonChimeSDK.CreateAttendeeResponse,
          wordingTextAgent: String?,
          wordingTextClient: String?,
+         recordDate: String?,
          isAsAgent: Bool
     ) {
         self.meetingUUID = uuid
@@ -132,6 +135,15 @@ class VideoConferenceVM {
         self.wordingTextAgent = wordingTextAgent
         self.wordingTextClient = wordingTextClient
         self.isAsAgent = isAsAgent
+        
+        if let recordDate {
+            let dateformatter = DateFormatter()
+            dateformatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // "recordDate" -> "2023-01-07 18:46:48"
+            self.recordDate = dateformatter.date(from: recordDate)
+            print("string record date \(recordDate)")
+            print("date is null \(dateformatter.date(from: recordDate) == nil)")
+        }
+        
         self.meetingSessionConfig = MeetingSessionConfiguration(
             createMeetingResponse: createMeetingResponse,
             createAttendeeResponse: createAttendeeResponse
@@ -148,6 +160,7 @@ class VideoConferenceVM {
         minuteFormatter.unitsStyle = .positional
         minuteFormatter.allowedUnits = [.minute, .second]
         minuteFormatter.zeroFormattingBehavior = .pad
+       
     }
     
     func addObserver() {
@@ -237,14 +250,19 @@ extension VideoConferenceVM {
         guard recordTimer == nil else { return }
         
         let timer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(timeRecordDidFire(_:)), userInfo: nil, repeats: true)
-        maxRecordTime = Date().addingTimeInterval(TimeInterval(MAX_RECORD_TIME * 60))
+        if let recordDate {
+            maxRecordTime = recordDate.addingTimeInterval(TimeInterval(MAX_RECORD_TIME * 60))
+        } else {
+            maxRecordTime = Date().addingTimeInterval(TimeInterval(MAX_RECORD_TIME * 60))
+        }
+        
         recordTimer = timer
         recordTimer?.fire()
     }
     
     @objc
     private func timeRecordDidFire(_ sender: Timer) {
-        let startDate = startTime ?? Date()
+        let startDate = self.recordDate ?? startTime ?? Date()
         let now = Date()
         let elapsed = now - startDate
         
@@ -265,7 +283,9 @@ extension VideoConferenceVM {
             stopRecordTimer()
         }
         
-        startTime = startDate
+        if self.recordDate == nil {
+            startTime = startDate
+        }
     }
     
     private func fireWaitingTimer() {
