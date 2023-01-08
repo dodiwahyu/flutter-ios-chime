@@ -142,6 +142,7 @@ class VideoConferenceViewController: UIViewController {
     }
     
     private func setupUI() {
+        prymaryScreenView.mirror = true
         prymaryScreenView.backgroundColor = .white
         secondaryScreenView.backgroundColor = .clear
         statusAlertView.backgroundColor = AppColors.primary
