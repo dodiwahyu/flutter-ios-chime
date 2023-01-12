@@ -9,7 +9,7 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}): super(key: key);
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -17,7 +17,6 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
-  final _iosChimePlugin = IosChime();
 
   @override
   void initState() {
@@ -31,7 +30,7 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion = await _iosChimePlugin.getPlatformVersion() ??
+      platformVersion = await IosChime.getPlatformVersion() ??
           'Unknown platform version';
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
@@ -68,6 +67,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void showMeeting() async {
-    await _iosChimePlugin.joinMeeting();
+    await IosChime.joinMeeting(params: '');
   }
 }

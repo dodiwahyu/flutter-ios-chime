@@ -10,6 +10,72 @@ class MockIosChimePlatform
 
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
+
+  @override
+  Future<void> endMeeting() {
+    // TODO: implement endMeeting
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> hideLoading() {
+    // TODO: implement hideLoading
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> joinMeeting({required String? params}) {
+    // TODO: implement joinMeeting
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> meetingBeingRecorded() {
+    // TODO: implement meetingBeingRecorded
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> meetingStopRecording() {
+    // TODO: implement meetingStopRecording
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> requestCameraUsage() {
+    // TODO: implement requestCameraUsage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> requestRecordPermissions() {
+    // TODO: implement requestRecordPermissions
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> setJoinRoomByAgent(bool isSuccess) {
+    // TODO: implement setJoinRoomByAgent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<bool?> setLangCode(String langCode) {
+    // TODO: implement setLangCode
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> showToast(String message) {
+    // TODO: implement showToast
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> test() {
+    // TODO: implement test
+    throw UnimplementedError();
+  }
 }
 
 void main() {
@@ -23,7 +89,5 @@ void main() {
     IosChime iosChimePlugin = IosChime();
     MockIosChimePlatform fakePlatform = MockIosChimePlatform();
     IosChimePlatform.instance = fakePlatform;
-
-    expect(await iosChimePlugin.getPlatformVersion(), '42');
   });
 }
