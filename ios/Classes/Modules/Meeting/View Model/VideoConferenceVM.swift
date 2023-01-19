@@ -374,6 +374,19 @@ extension VideoConferenceVM {
 
 // Response from dart
 extension VideoConferenceVM {
+    
+    func stopSessionsAndCloseScreen() {
+        stopMeeting() {[weak self] in
+            if let isAgentRequestToEnd = self?.isAgentRequestToEnd, isAgentRequestToEnd {
+                self?.output?.vmSessionDidEndByAgent()
+            } else {
+                self?.output?.vmSessionDidEndByClient()
+            }
+            
+            self?.sendStopRecording()
+        }
+    }
+    
     func meetingBeingRecorded(_ completion: DefaultPluginCompletion? = nil) {
         SVProgressHUD.showSuccess(withStatus: "Start recording")
         isRecording = true
@@ -384,7 +397,11 @@ extension VideoConferenceVM {
     
     func meetingStopRecording(_ completion: DefaultPluginCompletion? = nil) {
         SVProgressHUD.showSuccess(withStatus: "Recording did stopped")
-        isRecording = false
+        
+        // stop meeting
+        stopSessionsAndCloseScreen()
+        
+        // handle completion
         completion?()
     }
     
@@ -492,15 +509,8 @@ extension VideoConferenceVM: AudioVideoObserver {
     
     func videoSessionDidStopWithStatus(sessionStatus: AmazonChimeSDK.MeetingSessionStatus) {
         if sessionStatus.statusCode == .audioServerHungup || sessionStatus.statusCode == .videoServiceUnavailable {
-            stopMeeting() {[weak self] in
-                if let isAgentRequestToEnd = self?.isAgentRequestToEnd, isAgentRequestToEnd {
-                    self?.output?.vmSessionDidEndByAgent()
-                } else {
-                    self?.output?.vmSessionDidEndByClient()
-                }
-                
-                
-                self?.sendStopRecording()
+            if isRecording {
+                stopSessionsAndCloseScreen()
             }
         }
         
@@ -561,6 +571,9 @@ extension VideoConferenceVM: RealtimeObserver {
            listAttendeeJoinded.first(where: {
                $0.attendeeId != currentAttendee.attendeeId
            }) != nil {
+            
+            // set record flag
+            isRecording = true
             
             // For AMS
             self.fireTimeRecord()
