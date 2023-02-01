@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'ios_chime'
-  s.version          = '0.1.5-2.3.dev'
+  s.version          = '0.1.5-2.4.dev'
   s.summary          = 'ios_chime adalah plugin untuk handle video conference AMS'
   s.description      = <<-DESC
 Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
@@ -27,7 +27,7 @@ Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
   s.dependency 'AmazonChimeSDKMachineLearning-Bitcode'
   s.dependency 'Toast-Swift', '~> 5.0.1'
   s.dependency 'SVProgressHUD'
-  s.dependency 'Connectivity'
+  s.dependency 'Connectivity', '~>5.3.1'
   
   # Minimum iOS version
   s.platform = :ios, '11.0'

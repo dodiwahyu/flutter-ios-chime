@@ -275,12 +275,14 @@ class VideoConferenceViewController: UIViewController {
         switch status {
         case .connectedViaCellular,
             .connectedViaWiFi,
-            .connected:
+            .connected,
+            .connectedViaEthernet:
             connectivityView.backgroundColor = AppColors.green
             
         case .notConnected,
             .connectedViaCellularWithoutInternet,
-            .connectedViaWiFiWithoutInternet:
+            .connectedViaWiFiWithoutInternet,
+            .connectedViaEthernetWithoutInternet:
             connectivityView.backgroundColor = AppColors.red
             
         case .determining:
