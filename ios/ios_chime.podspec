@@ -15,16 +15,18 @@ Plugin ini dibagun dengan code inti native swift dan diwrapping dengan code dart
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.resource_bundles = {
-    'ios_chime' => ['Classes/**/*.xib','Assets/*.lproj/*.strings', 'Assets/**/*']
+    'ios_chime' => ['Classes/**/*.xib','Assets/*.lproj/*.strings', 'Assets/**/*',]
   }
 
   # The following dependencies are required for the Amazon Chime SDK
   s.static_framework = true
+
+  s.vendored_frameworks = 'binaries/AmazonChimeSDK.xcframework', 'binaries/AmazonChimeSDKMedia.xcframework'
   
   # Core dependencies are required
   s.dependency 'Flutter'
-  s.dependency 'AmazonChimeSDK-Bitcode'
-  s.dependency 'AmazonChimeSDKMachineLearning-Bitcode'
+  # s.dependency 'AmazonChimeSDK-Bitcode', '0.22.5'
+  # s.dependency 'AmazonChimeSDKMachineLearning-Bitcode'
   s.dependency 'Toast-Swift', '~> 5.0.1'
   s.dependency 'SVProgressHUD'
   s.dependency 'Connectivity', '~>5.3.1'
